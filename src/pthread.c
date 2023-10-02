@@ -254,7 +254,10 @@ int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *e
 
     P101_TRACE(env);
     errno   = 0;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wthread-safety-analysis"
     ret_val = pthread_cond_timedwait(cond, mutex, abstime);
+#pragma GCC diagnostic pop
 
     if(ret_val != 0)
     {
