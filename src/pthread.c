@@ -273,7 +273,10 @@ int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, p
 
     P101_TRACE(env);
     errno   = 0;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wthread-safety-analysis"
     ret_val = pthread_cond_wait(cond, mutex);
+#pragma GCC diagnostic pop
 
     if(ret_val != 0)
     {
