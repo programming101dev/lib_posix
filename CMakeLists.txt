@@ -134,7 +134,7 @@ target_link_libraries(p101_posix PRIVATE p101_c)
 find_library(ICONV_LIBRARY iconv)
 
 if(ICONV_LIBRARY)
-    target_link_libraries(your_executable_name PRIVATE ${ICONV_LIBRARY})
+    target_link_libraries(p101_posix PRIVATE ${ICONV_LIBRARY})
 endif()
 
 # Common compiler flags
