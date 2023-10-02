@@ -17,7 +17,10 @@
  * limitations under the License.
  */
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreserved-macro-identifier"
 #include <iconv.h>
+#pragma GCC diagnostic pop
 #include <p101_env/env.h>
 
 #ifdef __cplusplus
