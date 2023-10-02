@@ -17,11 +17,14 @@
  * limitations under the License.
  */
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreserved-macro-identifier"
-#pragma GCC diagnostic ignored "-Wreserved-identifier"
+#if defined(__clang__)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wreserved-identifier"
+#endif
 #include <iconv.h>
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma clang diagnostic pop
+#endif
 #include <p101_env/env.h>
 
 #ifdef __cplusplus
