@@ -115,6 +115,10 @@ set(HEADER_LIST_SYS
 # Build the shared library
 add_library(p101_posix SHARED ${SOURCES})
 
+target_include_directories(p101_posix PRIVATE /usr/local/include)
+target_link_directories(p101_posix PRIVATE /usr/local/lib)
+target_link_directories(p101_posix PRIVATE /usr/local/lib64)
+
 # Enable UBSan checks
 target_compile_options(p101_posix PRIVATE -fsanitize=undefined)
 target_link_libraries(p101_posix PRIVATE -fsanitize=undefined)
@@ -722,7 +726,6 @@ set(WARNING_FLAGS
         -Wpointer-to-enum-cast
         -Wpointer-to-int-cast
         -Wpointer-type-mismatch
-        -Wpoison-system-directories
         -Wpotentially-direct-selector
         -Wpotentially-evaluated-expression
         -Wpragma-clang-attribute
