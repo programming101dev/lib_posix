@@ -19,6 +19,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreserved-macro-identifier"
+#pragma GCC diagnostic ignored "-Wreserved-identifier"
 #include <iconv.h>
 #pragma GCC diagnostic pop
 #include <p101_env/env.h>
