@@ -115,6 +115,10 @@ set(HEADER_LIST_SYS
 # Build the shared library
 add_library(p101_posix SHARED ${SOURCES})
 
+# Enable UBSan checks
+target_compile_options(p101_posix PRIVATE -fsanitize=undefined)
+target_link_libraries(p101_posix PRIVATE -fsanitize=undefined)
+
 # Include directories (if needed)
 target_include_directories(p101_posix PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
