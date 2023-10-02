@@ -117,14 +117,14 @@ size_t p101_strftime_l(const struct p101_env *env, char *restrict s, size_t maxs
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
     ret_val = strftime_l(s, maxsize, format, timeptr, locale);
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
+    #pragma GCC diagnostic pop
 #endif
 
     return ret_val;
