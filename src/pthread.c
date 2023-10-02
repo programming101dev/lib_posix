@@ -498,6 +498,8 @@ int p101_pthread_mutex_trylock(const struct p101_env *env, struct p101_error *er
 }
 #pragma GCC diagnostic pop
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wthread-safety-analysis"
 int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err, pthread_mutex_t *mutex)
 {
     int ret_val;
@@ -513,6 +515,7 @@ int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err
 
     return ret_val;
 }
+#pragma GCC diagnostic pop
 
 int p101_pthread_mutexattr_destroy(const struct p101_env *env, struct p101_error *err, pthread_mutexattr_t *attr)
 {
