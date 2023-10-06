@@ -16,7 +16,7 @@
 
 #include "p101_posix/p101_wchar.h"
 
-size_t p101_mbsnrtowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict dst, const char **restrict src, size_t nmc, size_t len, mbstate_t *restrict ps)    // cppcheck-suppress constParameterPointer
+size_t p101_mbsnrtowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict dst, const char **restrict src, size_t nmc, size_t len, mbstate_t *restrict ps)
 {
     size_t ret_val;
 

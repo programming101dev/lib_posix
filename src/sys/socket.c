@@ -64,7 +64,7 @@ int p101_connect(const struct p101_env *env, struct p101_error *err, int socket,
     return ret_val;
 }
 
-int p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)    // cppcheck-suppress constParameterPointer
+int p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)
 {
     int ret_val;
 
@@ -80,7 +80,7 @@ int p101_getpeername(const struct p101_env *env, struct p101_error *err, int soc
     return ret_val;
 }
 
-int p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)    // cppcheck-suppress constParameterPointer
+int p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)
 {
     int ret_val;
 

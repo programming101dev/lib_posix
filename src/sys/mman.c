@@ -17,7 +17,7 @@
 #include "p101_posix/sys/p101_mman.h"
 #include <sys/mman.h>
 
-void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len, int prot, int flags, int fildes, off_t off)    // cppcheck-suppress constParameterPointer
+void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len, int prot, int flags, int fildes, off_t off)
 {
     void *ret_val;
 
@@ -49,7 +49,7 @@ int p101_mprotect(const struct p101_env *env, struct p101_error *err, void *addr
     return ret_val;
 }
 
-int p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len)    // cppcheck-suppress constParameterPointer
+int p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len)
 {
     int ret_val;
 
