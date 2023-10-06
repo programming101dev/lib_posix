@@ -25,10 +25,8 @@ extern "C"
 {
 #endif
 
-    int p101_pselect(const struct p101_env *env, struct p101_error *err, int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds,
-                     const struct timespec *restrict timeout, const sigset_t *restrict sigmask);
-    int p101_select(const struct p101_env *env, struct p101_error *err, int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds,
-                    struct timeval *restrict timeout);
+    int p101_pselect(const struct p101_env *env, struct p101_error *err, int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds, const struct timespec *restrict timeout, const sigset_t *restrict sigmask);
+    int p101_select(const struct p101_env *env, struct p101_error *err, int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds, struct timeval *restrict timeout);
 
 #ifdef __cplusplus
 }

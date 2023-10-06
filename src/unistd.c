@@ -389,6 +389,7 @@ int p101_gethostname(const struct p101_env *env, struct p101_error *err, char *n
     return ret_val;
 }
 
+/*
 char *p101_getlogin(const struct p101_env *env, struct p101_error *err)
 {
     char *ret_val;
@@ -404,6 +405,7 @@ char *p101_getlogin(const struct p101_env *env, struct p101_error *err)
 
     return ret_val;
 }
+*/
 
 int p101_getlogin_r(const struct p101_env *env, struct p101_error *err, char *name, size_t namesize)
 {
@@ -935,6 +937,7 @@ int p101_truncate(const struct p101_env *env, struct p101_error *err, const char
     return ret_val;
 }
 
+/*
 char *p101_ttyname(const struct p101_env *env, struct p101_error *err, int fildes)
 {
     char *ret_val;
@@ -950,6 +953,7 @@ char *p101_ttyname(const struct p101_env *env, struct p101_error *err, int filde
 
     return ret_val;
 }
+*/
 
 int p101_ttyname_r(const struct p101_env *env, struct p101_error *err, int fildes, char *name, size_t namesize)
 {

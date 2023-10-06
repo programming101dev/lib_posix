@@ -50,7 +50,6 @@ extern "C"
     gid_t          p101_getgid(const struct p101_env *env);
     int            p101_getgroups(const struct p101_env *env, struct p101_error *err, int gidsetsize, gid_t grouplist[]);
     int            p101_gethostname(const struct p101_env *env, struct p101_error *err, char *name, size_t namelen);
-    char          *p101_getlogin(const struct p101_env *env, struct p101_error *err);
     int            p101_getlogin_r(const struct p101_env *env, struct p101_error *err, char *name, size_t namesize);
     int            p101_getopt(const struct p101_env *env, int argc, char *const argv[], const char *optstring);
     pid_t          p101_getpgid(const struct p101_env *env, struct p101_error *err, pid_t pid);
@@ -86,7 +85,6 @@ extern "C"
     pid_t          p101_tcgetpgrp(const struct p101_env *env, struct p101_error *err, int fildes);
     int            p101_tcsetpgrp(const struct p101_env *env, struct p101_error *err, int fildes, pid_t pgid_id);
     int            p101_truncate(const struct p101_env *env, struct p101_error *err, const char *path, off_t length);
-    char          *p101_ttyname(const struct p101_env *env, struct p101_error *err, int fildes);
     int            p101_ttyname_r(const struct p101_env *env, struct p101_error *err, int fildes, char *name, size_t namesize);
     int            p101_unlink(const struct p101_env *env, struct p101_error *err, const char *path);
     int            p101_unlinkat(const struct p101_env *env, struct p101_error *err, int fd, const char *path, int flag);
@@ -95,6 +93,10 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// char *p101_getlogin(const struct p101_env *env, struct p101_error *err);
+// char *p101_ttyname(const struct p101_env *env, struct p101_error *err, int fildes);
 
 // not on macOS
 // int p101_fexecve(const struct p101_env *env, struct p101_error *err, int fd, char *const argv[], char *const envp[]);

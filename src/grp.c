@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_grp.h"
 
+/*
 struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, gid_t gid)
 {
     struct group *ret_val;
@@ -31,6 +32,7 @@ struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, 
 
     return ret_val;
 }
+*/
 
 int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gid, struct group *grp, char *buffer, size_t bufsize, struct group **result)
 {
@@ -48,6 +50,7 @@ int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gi
     return ret_val;
 }
 
+/*
 struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, const char *name)
 {
     struct group *ret_val;
@@ -63,6 +66,7 @@ struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, 
 
     return ret_val;
 }
+*/
 
 int p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct group *grp, char *buffer, size_t bufsize, struct group **result)
 {

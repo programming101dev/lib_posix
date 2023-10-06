@@ -64,7 +64,7 @@ int p101_connect(const struct p101_env *env, struct p101_error *err, int socket,
     return ret_val;
 }
 
-int p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)
+int p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)    // cppcheck-suppress constParameterPointer
 {
     int ret_val;
 
@@ -80,7 +80,7 @@ int p101_getpeername(const struct p101_env *env, struct p101_error *err, int soc
     return ret_val;
 }
 
-int p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)
+int p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)    // cppcheck-suppress constParameterPointer
 {
     int ret_val;
 
@@ -144,8 +144,7 @@ ssize_t p101_recv(const struct p101_env *env, struct p101_error *err, int socket
     return ret_val;
 }
 
-ssize_t p101_recvfrom(const struct p101_env *env, struct p101_error *err, int socket, void *restrict buffer, size_t length, int flags, struct sockaddr *restrict address,
-                      socklen_t *restrict address_len)
+ssize_t p101_recvfrom(const struct p101_env *env, struct p101_error *err, int socket, void *restrict buffer, size_t length, int flags, struct sockaddr *restrict address, socklen_t *restrict address_len)
 {
     ssize_t ret_val;
 
@@ -209,8 +208,7 @@ ssize_t p101_sendmsg(const struct p101_env *env, struct p101_error *err, int soc
     return ret_val;
 }
 
-ssize_t p101_sendto(const struct p101_env *env, struct p101_error *err, int socket, const void *message, size_t length, int flags, const struct sockaddr *dest_addr,
-                    socklen_t dest_len)
+ssize_t p101_sendto(const struct p101_env *env, struct p101_error *err, int socket, const void *message, size_t length, int flags, const struct sockaddr *dest_addr, socklen_t dest_len)
 {
     ssize_t ret_val;
 

@@ -18,6 +18,7 @@
  */
 
 #include <p101_env/env.h>
+#include <pwd.h>
 #include <sys/types.h>
 
 #ifdef __cplusplus
@@ -25,13 +26,15 @@ extern "C"
 {
 #endif
 
-    struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err, const char *name);
-    int            p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result);
-    struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err, uid_t uid);
-    int            p101_getpwuid_r(const struct p101_env *env, struct p101_error *err, uid_t uid, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result);
+    int p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result);
+    int p101_getpwuid_r(const struct p101_env *env, struct p101_error *err, uid_t uid, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result);
 
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err, const char *name);
+// struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err, uid_t uid);
 
 #endif    // LIBP101_POSIX_P101_PWD_H

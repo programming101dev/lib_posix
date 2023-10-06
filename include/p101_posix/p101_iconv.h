@@ -32,8 +32,7 @@ extern "C"
 {
 #endif
 
-    size_t  p101_iconv(const struct p101_env *env, struct p101_error *err, iconv_t cd, char **restrict inbuf, size_t *restrict inbytesleft, char **restrict outbuf,
-                       size_t *restrict outbytesleft);
+    size_t  p101_iconv(const struct p101_env *env, struct p101_error *err, iconv_t cd, char **restrict inbuf, size_t *restrict inbytesleft, char **restrict outbuf, size_t *restrict outbytesleft);
     int     p101_iconv_close(const struct p101_env *env, struct p101_error *err, iconv_t cd);
     iconv_t p101_iconv_open(const struct p101_env *env, struct p101_error *err, const char *tocode, const char *fromcode);
 

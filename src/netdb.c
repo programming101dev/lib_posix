@@ -62,8 +62,7 @@ const char *p101_gai_strerror(const struct p101_env *env, int ecode)
     return ret_val;
 }
 
-int p101_getaddrinfo(const struct p101_env *env, struct p101_error *err, const char *restrict nodename, const char *restrict servname, const struct addrinfo *restrict hints,
-                     struct addrinfo **restrict res)
+int p101_getaddrinfo(const struct p101_env *env, struct p101_error *err, const char *restrict nodename, const char *restrict servname, const struct addrinfo *restrict hints, struct addrinfo **restrict res)
 {
     int ret_val;
 
@@ -91,8 +90,7 @@ struct hostent *p101_gethostent(const struct p101_env *env)
     return ret_val;
 }
 
-int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const struct sockaddr *restrict sa, socklen_t salen, char *restrict node, socklen_t nodelen,
-                     char *restrict service, socklen_t servicelen, int flags)
+int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const struct sockaddr *restrict sa, socklen_t salen, char *restrict node, socklen_t nodelen, char *restrict service, socklen_t servicelen, int flags)
 {
     int ret_val;
 

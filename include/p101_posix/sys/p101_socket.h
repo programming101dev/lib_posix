@@ -25,21 +25,19 @@ extern "C"
 {
 #endif
 
-    int p101_accept(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
-    int p101_bind(const struct p101_env *env, struct p101_error *err, int socket, const struct sockaddr *address, socklen_t address_len);
-    int p101_connect(const struct p101_env *env, struct p101_error *err, int socket, const struct sockaddr *address, socklen_t address_len);
-    int p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
-    int p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
-    int p101_getsockopt(const struct p101_env *env, struct p101_error *err, int socket, int level, int option_name, void *restrict option_value, socklen_t *restrict option_len);
-    int p101_listen(const struct p101_env *env, struct p101_error *err, int socket, int backlog);
+    int     p101_accept(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
+    int     p101_bind(const struct p101_env *env, struct p101_error *err, int socket, const struct sockaddr *address, socklen_t address_len);
+    int     p101_connect(const struct p101_env *env, struct p101_error *err, int socket, const struct sockaddr *address, socklen_t address_len);
+    int     p101_getpeername(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
+    int     p101_getsockname(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
+    int     p101_getsockopt(const struct p101_env *env, struct p101_error *err, int socket, int level, int option_name, void *restrict option_value, socklen_t *restrict option_len);
+    int     p101_listen(const struct p101_env *env, struct p101_error *err, int socket, int backlog);
     ssize_t p101_recv(const struct p101_env *env, struct p101_error *err, int socket, void *buffer, size_t length, int flags);
-    ssize_t p101_recvfrom(const struct p101_env *env, struct p101_error *err, int socket, void *restrict buffer, size_t length, int flags, struct sockaddr *restrict address,
-                          socklen_t *restrict address_len);
+    ssize_t p101_recvfrom(const struct p101_env *env, struct p101_error *err, int socket, void *restrict buffer, size_t length, int flags, struct sockaddr *restrict address, socklen_t *restrict address_len);
     ssize_t p101_recvmsg(const struct p101_env *env, struct p101_error *err, int socket, struct msghdr *message, int flags);
     ssize_t p101_send(const struct p101_env *env, struct p101_error *err, int socket, const void *buffer, size_t length, int flags);
     ssize_t p101_sendmsg(const struct p101_env *env, struct p101_error *err, int socket, const struct msghdr *message, int flags);
-    ssize_t p101_sendto(const struct p101_env *env, struct p101_error *err, int socket, const void *message, size_t length, int flags, const struct sockaddr *dest_addr,
-                        socklen_t dest_len);
+    ssize_t p101_sendto(const struct p101_env *env, struct p101_error *err, int socket, const void *message, size_t length, int flags, const struct sockaddr *dest_addr, socklen_t dest_len);
     int     p101_setsockopt(const struct p101_env *env, struct p101_error *err, int socket, int level, int option_name, const void *option_value, socklen_t option_len);
     int     p101_shutdown(const struct p101_env *env, struct p101_error *err, int socket, int how);
     int     p101_sockatmark(const struct p101_env *env, struct p101_error *err, int s);

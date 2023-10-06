@@ -25,29 +25,27 @@ extern "C"
 {
 #endif
 
-    int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void));
-    int p101_pthread_attr_destroy(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr);
-    int p101_pthread_attr_getdetachstate(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *attr, int *detachstate);
-    int p101_pthread_attr_getguardsize(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, size_t *restrict guardsize);
-    int p101_pthread_attr_getschedparam(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, struct sched_param *restrict param);
-    int p101_pthread_attr_init(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr);
-    int p101_pthread_attr_setdetachstate(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr, int detachstate);
-    int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, size_t guardsize);
-    int p101_pthread_attr_setschedparam(const struct p101_env *env, struct p101_error *err, pthread_attr_t *restrict attr, const struct sched_param *restrict param);
-    int p101_pthread_cancel(const struct p101_env *env, struct p101_error *err, pthread_t thread);
-    int p101_pthread_cond_broadcast(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
-    int p101_pthread_cond_destroy(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
-    int p101_pthread_cond_init(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, const pthread_condattr_t *restrict attr);
-    int p101_pthread_cond_signal(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
-    int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex,
-                                    const struct timespec *restrict abstime);
-    int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex);
-    int p101_pthread_condattr_destroy(const struct p101_env *env, struct p101_error *err, pthread_condattr_t *attr);
-    int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *err, pthread_condattr_t *attr);
-    int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *),
-                            void *restrict arg);
-    int p101_pthread_detach(const struct p101_env *env, struct p101_error *err, pthread_t thread);
-    int p101_pthread_equal(const struct p101_env *env, pthread_t t1, pthread_t t2);
+    int            p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void));
+    int            p101_pthread_attr_destroy(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr);
+    int            p101_pthread_attr_getdetachstate(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *attr, int *detachstate);
+    int            p101_pthread_attr_getguardsize(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, size_t *restrict guardsize);
+    int            p101_pthread_attr_getschedparam(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, struct sched_param *restrict param);
+    int            p101_pthread_attr_init(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr);
+    int            p101_pthread_attr_setdetachstate(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr, int detachstate);
+    int            p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, size_t guardsize);
+    int            p101_pthread_attr_setschedparam(const struct p101_env *env, struct p101_error *err, pthread_attr_t *restrict attr, const struct sched_param *restrict param);
+    int            p101_pthread_cancel(const struct p101_env *env, struct p101_error *err, pthread_t thread);
+    int            p101_pthread_cond_broadcast(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
+    int            p101_pthread_cond_destroy(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
+    int            p101_pthread_cond_init(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, const pthread_condattr_t *restrict attr);
+    int            p101_pthread_cond_signal(const struct p101_env *env, struct p101_error *err, pthread_cond_t *cond);
+    int            p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex, const struct timespec *restrict abstime);
+    int            p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex);
+    int            p101_pthread_condattr_destroy(const struct p101_env *env, struct p101_error *err, pthread_condattr_t *attr);
+    int            p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *err, pthread_condattr_t *attr);
+    int            p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg);
+    int            p101_pthread_detach(const struct p101_env *env, struct p101_error *err, pthread_t thread);
+    int            p101_pthread_equal(const struct p101_env *env, pthread_t t1, pthread_t t2);
     _Noreturn void p101_pthread_exit(const struct p101_env *env, void *value_ptr);
     void          *p101_pthread_getspecific(const struct p101_env *env, pthread_key_t key);
     int            p101_pthread_join(const struct p101_env *env, struct p101_error *err, pthread_t thread, void **value_ptr);

@@ -36,7 +36,11 @@ int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *re
         if(p101_error_has_no_error(err))
         {
             // TODO: this needs to be fixed - remove the NOLINT
+
+#ifndef __clang_analyzer__
+            // cppcheck-suppress unreadVariable
             len = p101_regerror(env, ret_val, preg, msg, len);    // NOLINT(clang-analyzer-deadcode.DeadStores)
+#endif
             P101_ERROR_RAISE_SYSTEM(err, msg, ret_val);
             p101_free(env, msg);
         }

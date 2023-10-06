@@ -16,7 +16,7 @@
 
 #include "p101_posix/p101_glob.h"
 
-int p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno), glob_t *restrict pglob)
+int p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno), glob_t *restrict pglob)    // cppcheck-suppress constParameterPointer
 {
     int ret_val;
 

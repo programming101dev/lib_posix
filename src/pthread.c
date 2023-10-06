@@ -254,8 +254,7 @@ int p101_pthread_cond_signal(const struct p101_env *env, struct p101_error *err,
     return ret_val;
 }
 
-int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex,
-                                const struct timespec *restrict abstime)
+int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *err, pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex, const struct timespec *restrict abstime)
 {
     int ret_val;
 
@@ -333,8 +332,7 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
     return ret_val;
 }
 
-int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *),
-                        void *restrict arg)
+int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg)
 {
     int ret_val;
 

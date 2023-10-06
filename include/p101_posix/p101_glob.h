@@ -25,8 +25,7 @@ extern "C"
 {
 #endif
 
-    int  p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno),
-                   glob_t *restrict pglob);
+    int  p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno), glob_t *restrict pglob);
     void p101_globfree(const struct p101_env *env, glob_t *pglob);
 
 #ifdef __cplusplus

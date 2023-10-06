@@ -48,7 +48,7 @@ int p101_closedir(const struct p101_env *env, struct p101_error *err, DIR *dirp)
     return ret_val;
 }
 
-int p101_dirfd(const struct p101_env *env, struct p101_error *err, DIR *dirp)
+int p101_dirfd(const struct p101_env *env, struct p101_error *err, DIR *dirp)    // cppcheck-suppress constParameterPointer
 {
     int ret_val;
 
@@ -119,8 +119,8 @@ void p101_rewinddir(const struct p101_env *env, DIR *dirp)
     rewinddir(dirp);
 }
 
-int p101_scandir(const struct p101_env *env, struct p101_error *err, const char *dir, struct dirent ***namelist, int (*sel)(const struct dirent *),
-                 int (*compar)(const struct dirent **, const struct dirent **))
+// cppcheck-suppress constParameterPointer
+int p101_scandir(const struct p101_env *env, struct p101_error *err, const char *dir, struct dirent ***namelist, int (*sel)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **))    // cppcheck-suppress constParameterPointer
 {
     int ret_val;
 

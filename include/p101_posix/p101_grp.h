@@ -25,13 +25,15 @@ extern "C"
 {
 #endif
 
-    struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, gid_t gid);
-    int           p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gid, struct group *grp, char *buffer, size_t bufsize, struct group **result);
-    struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, const char *name);
-    int           p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct group *grp, char *buffer, size_t bufsize, struct group **result);
+    int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gid, struct group *grp, char *buffer, size_t bufsize, struct group **result);
+    int p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct group *grp, char *buffer, size_t bufsize, struct group **result);
 
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, gid_t gid);
+// struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, const char *name);
 
 #endif    // LIBP101_POSIX_P101_GRP_H

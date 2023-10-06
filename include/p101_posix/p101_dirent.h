@@ -32,8 +32,7 @@ extern "C"
     DIR           *p101_opendir(const struct p101_env *env, struct p101_error *err, const char *dirname);
     struct dirent *p101_readdir(const struct p101_env *env, struct p101_error *err, DIR *dirp);
     void           p101_rewinddir(const struct p101_env *env, DIR *dirp);
-    int            p101_scandir(const struct p101_env *env, struct p101_error *err, const char *dir, struct dirent ***namelist, int (*sel)(const struct dirent *),
-                                int (*compar)(const struct dirent **, const struct dirent **));
+    int            p101_scandir(const struct p101_env *env, struct p101_error *err, const char *dir, struct dirent ***namelist, int (*sel)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **));
 
 #ifdef __cplusplus
 }

@@ -17,6 +17,7 @@
 #include "p101_posix/p101_pwd.h"
 #include <pwd.h>
 
+/*
 struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err, const char *name)
 {
     struct passwd *ret_val;
@@ -32,6 +33,7 @@ struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err,
 
     return ret_val;
 }
+*/
 
 int p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result)
 {
@@ -49,6 +51,7 @@ int p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const ch
     return ret_val;
 }
 
+/*
 struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
 {
     struct passwd *ret_val;
@@ -64,6 +67,7 @@ struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err,
 
     return ret_val;
 }
+*/
 
 int p101_getpwuid_r(const struct p101_env *env, struct p101_error *err, uid_t uid, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result)
 {

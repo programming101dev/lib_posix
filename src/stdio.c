@@ -169,7 +169,7 @@ int p101_getchar_unlocked(const struct p101_env *env, struct p101_error *err)
     return ret_val;
 }
 
-ssize_t p101_getdelim(const struct p101_env *env, struct p101_error *err, char **restrict lineptr, size_t *restrict n, int delimiter, FILE *restrict stream)
+ssize_t p101_getdelim(const struct p101_env *env, struct p101_error *err, char **restrict lineptr, size_t *restrict n, int delimiter, FILE *restrict stream)    // cppcheck-suppress constParameterPointer
 {
     ssize_t ret_val;
 
@@ -185,7 +185,7 @@ ssize_t p101_getdelim(const struct p101_env *env, struct p101_error *err, char *
     return ret_val;
 }
 
-ssize_t p101_getline(const struct p101_env *env, struct p101_error *err, char **restrict lineptr, size_t *restrict n, FILE *restrict stream)
+ssize_t p101_getline(const struct p101_env *env, struct p101_error *err, char **restrict lineptr, size_t *restrict n, FILE *restrict stream)    // cppcheck-suppress constParameterPointer
 {
     ssize_t ret_val;
 
