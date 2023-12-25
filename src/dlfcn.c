@@ -27,7 +27,7 @@ int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handl
 
     if(ret_val != 0)
     {
-        char *str;
+        const char *str;
 
         str = p101_dlerror(env);
         P101_ERROR_RAISE_SYSTEM(err, str, ret_val);
@@ -57,7 +57,7 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
 
     if(ret_val == NULL)
     {
-        char *str;
+        const char *str;
 
         str = p101_dlerror(env);
         // TODO: what to do instead of -1?
@@ -77,7 +77,7 @@ void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restr
 
     if(ret_val == NULL)
     {
-        char *msg;
+        const char *msg;
 
         msg = p101_dlerror(env);
         P101_ERROR_RAISE_SYSTEM(err, msg, 1);
