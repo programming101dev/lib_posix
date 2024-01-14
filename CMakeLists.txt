@@ -212,7 +212,7 @@ add_custom_target(lint
 
 # Add a custom target for cppcheck
 add_custom_target(cppcheck
-    COMMAND ${CPPCHECK} --error-exitcode=1 --force --quiet --inline-suppr --library=posix --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=readdirCalled --suppress=gethostentCalled --suppress=getnetbyaddrCalled --suppress=getnetbynameCalled --suppress=getnetentCalled --suppress=getprotobynameCalled --suppress=getprotobynumberCalled --suppress=getprotoentCalled --suppress=getservbynameCalled --suppress=getservbyportCalled --suppress=getserventCalled --suppress=ctermidCalled --suppress=constParameterPointer --suppress=unmatchedSuppression -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS}
+    COMMAND ${CPPCHECK} --error-exitcode=1 --force --quiet --inline-suppr --library=posix --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=readdirCalled --suppress=gethostentCalled --suppress=getnetbyaddrCalled --suppress=getnetbynameCalled --suppress=getnetentCalled --suppress=getprotobynameCalled --suppress=getprotobynumberCalled --suppress=getprotoentCalled --suppress=getservbynameCalled --suppress=getservbyportCalled --suppress=getserventCalled --suppress=ctermidCalled --suppress=constParameterPointer --suppress=unmatchedSuppression --suppress=checkersReport -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Running cppcheck"
 )
