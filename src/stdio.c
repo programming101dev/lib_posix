@@ -142,8 +142,11 @@ int p101_getc_unlocked(const struct p101_env *env, struct p101_error *err, FILE 
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
     ret_val = getc_unlocked(stream);
+#pragma clang diagnostic pop
 
     if(ret_val == EOF && errno != 0)
     {
@@ -158,8 +161,11 @@ int p101_getchar_unlocked(const struct p101_env *env, struct p101_error *err)
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
     ret_val = getchar_unlocked();
+#pragma clang diagnostic pop
 
     if(ret_val == EOF && errno != 0)
     {
