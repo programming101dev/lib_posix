@@ -143,10 +143,19 @@ int p101_getc_unlocked(const struct p101_env *env, struct p101_error *err, FILE 
 
     P101_TRACE(env);
     errno = 0;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
+#ifdef __clang__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
+#elif __GNUC__
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstrict-overflow"
+#endif
     ret_val = getc_unlocked(stream);
-#pragma clang diagnostic pop
+#ifdef __clang__
+    #pragma clang diagnostic pop
+#elif __GNUC__
+    #pragma GCC diagnostic pop
+#endif
 
     if(ret_val == EOF && errno != 0)
     {
@@ -162,10 +171,19 @@ int p101_getchar_unlocked(const struct p101_env *env, struct p101_error *err)
 
     P101_TRACE(env);
     errno = 0;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
+#ifdef __clang__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
+#elif __GNUC__
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstrict-overflow"
+#endif
     ret_val = getchar_unlocked();
-#pragma clang diagnostic pop
+#ifdef __clang__
+    #pragma clang diagnostic pop
+#elif __GNUC__
+    #pragma GCC diagnostic pop
+#endif
 
     if(ret_val == EOF && errno != 0)
     {
@@ -312,9 +330,6 @@ int p101_vdprintf(const struct p101_env *env, struct p101_error *err, int fildes
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
-#endif
     ret_val = vdprintf(fildes, format, ap);
 #pragma GCC diagnostic pop
 

@@ -44,7 +44,7 @@ extern "C"
     int     p101_putc_unlocked(const struct p101_env *env, struct p101_error *err, int c, FILE *stream);
     int     p101_putchar_unlocked(const struct p101_env *env, struct p101_error *err, int c);
     int     p101_renameat(const struct p101_env *env, struct p101_error *err, int oldfd, const char *old_name, int newfd, const char *new_name);
-    int     p101_vdprintf(const struct p101_env *env, struct p101_error *err, int fildes, const char *restrict format, va_list ap);
+    int     p101_vdprintf(const struct p101_env *env, struct p101_error *err, int fildes, const char *restrict format, va_list ap) __attribute__((format(printf, 4, 0)));    // format attribute
 
 #ifdef __cplusplus
 }

@@ -85,8 +85,16 @@ int p101_sigaddset(const struct p101_env *env, struct p101_error *err, sigset_t 
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
+
+#ifdef __APPLE__
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     ret_val = sigaddset(set, signo);
+    #pragma GCC diagnostic pop
+#else
+    ret_val = sigaddset(set, signo);
+#endif
 
     if(ret_val == -1)
     {
@@ -101,8 +109,15 @@ int p101_sigdelset(const struct p101_env *env, struct p101_error *err, sigset_t 
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
+#ifdef __APPLE__
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     ret_val = sigdelset(set, signo);
+    #pragma GCC diagnostic pop
+#else
+    ret_val = sigdelset(set, signo);
+#endif
 
     if(ret_val == -1)
     {
@@ -149,8 +164,15 @@ int p101_sigismember(const struct p101_env *env, struct p101_error *err, const s
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
+#ifdef __APPLE__
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     ret_val = sigismember(set, signo);
+    #pragma GCC diagnostic pop
+#else
+    ret_val = sigismember(set, signo);
+#endif
 
     if(ret_val == -1)
     {
