@@ -259,15 +259,8 @@ int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
+    errno   = 0;
     ret_val = pthread_cond_timedwait(cond, mutex, abstime);
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
 
     if(ret_val != 0)
     {
@@ -282,15 +275,8 @@ int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, p
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
+    errno   = 0;
     ret_val = pthread_cond_wait(cond, mutex);
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
 
     if(ret_val != 0)
     {
@@ -473,11 +459,6 @@ int p101_pthread_mutex_init(const struct p101_env *env, struct p101_error *err, 
     return ret_val;
 }
 
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
-
 int p101_pthread_mutex_lock(const struct p101_env *env, struct p101_error *err, pthread_mutex_t *mutex)
 {
     int ret_val;
@@ -493,15 +474,6 @@ int p101_pthread_mutex_lock(const struct p101_env *env, struct p101_error *err, 
 
     return ret_val;
 }
-
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
 
 int p101_pthread_mutex_trylock(const struct p101_env *env, struct p101_error *err, pthread_mutex_t *mutex)
 {
@@ -519,15 +491,6 @@ int p101_pthread_mutex_trylock(const struct p101_env *env, struct p101_error *er
     return ret_val;
 }
 
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
-
 int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err, pthread_mutex_t *mutex)
 {
     int ret_val;
@@ -543,10 +506,6 @@ int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err
 
     return ret_val;
 }
-
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
 
 int p101_pthread_mutexattr_destroy(const struct p101_env *env, struct p101_error *err, pthread_mutexattr_t *attr)
 {
@@ -660,11 +619,6 @@ int p101_pthread_rwlock_init(const struct p101_env *env, struct p101_error *err,
     return ret_val;
 }
 
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
-
 int p101_pthread_rwlock_rdlock(const struct p101_env *env, struct p101_error *err, pthread_rwlock_t *rwlock)
 {
     int ret_val;
@@ -680,15 +634,6 @@ int p101_pthread_rwlock_rdlock(const struct p101_env *env, struct p101_error *er
 
     return ret_val;
 }
-
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
 
 int p101_pthread_rwlock_tryrdlock(const struct p101_env *env, struct p101_error *err, pthread_rwlock_t *rwlock)
 {
@@ -706,15 +651,6 @@ int p101_pthread_rwlock_tryrdlock(const struct p101_env *env, struct p101_error 
     return ret_val;
 }
 
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
-
 int p101_pthread_rwlock_trywrlock(const struct p101_env *env, struct p101_error *err, pthread_rwlock_t *rwlock)
 {
     int ret_val;
@@ -730,15 +666,6 @@ int p101_pthread_rwlock_trywrlock(const struct p101_env *env, struct p101_error 
 
     return ret_val;
 }
-
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
 
 int p101_pthread_rwlock_unlock(const struct p101_env *env, struct p101_error *err, pthread_rwlock_t *rwlock)
 {
@@ -756,15 +683,6 @@ int p101_pthread_rwlock_unlock(const struct p101_env *env, struct p101_error *er
     return ret_val;
 }
 
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
-
-#if defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
-
 int p101_pthread_rwlock_wrlock(const struct p101_env *env, struct p101_error *err, pthread_rwlock_t *rwlock)
 {
     int ret_val;
@@ -780,10 +698,6 @@ int p101_pthread_rwlock_wrlock(const struct p101_env *env, struct p101_error *er
 
     return ret_val;
 }
-
-#if defined(__clang__)
-    #pragma clang diagnostic pop
-#endif
 
 int p101_pthread_rwlockattr_destroy(const struct p101_env *env, struct p101_error *err, pthread_rwlockattr_t *attr)
 {
