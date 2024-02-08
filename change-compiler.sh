@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 c_compiler=""
 clang_format_name="clang-format"
 clang_tidy_name="clang-tidy"
