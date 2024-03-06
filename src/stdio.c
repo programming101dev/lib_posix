@@ -145,7 +145,7 @@ int p101_getc_unlocked(const struct p101_env *env, struct p101_error *err, FILE 
     errno = 0;
 #ifdef __GNUC__
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
+//    #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
     #pragma GCC diagnostic ignored "-Wstrict-overflow"
 #endif
     ret_val = getc_unlocked(stream);
@@ -169,7 +169,7 @@ int p101_getchar_unlocked(const struct p101_env *env, struct p101_error *err)
     errno = 0;
 #ifdef __GNUC__
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
+//    #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
     #pragma GCC diagnostic ignored "-Wstrict-overflow"
 #endif
     ret_val = getchar_unlocked();
