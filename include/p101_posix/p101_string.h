@@ -19,7 +19,7 @@
 
 #include <p101_env/env.h>
 
-#if (defined __APPLE__) || (defined __FreeBSD__)
+#if(defined __APPLE__) || (defined __FreeBSD__)
     #include <xlocale.h>
 #else
     #include <locale.h>

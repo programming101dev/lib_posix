@@ -17,7 +17,7 @@
 #include "p101_posix/p101_strings.h"
 #include <strings.h>
 
-#if (defined __APPLE__) || (defined __FreeBSD__)
+#if(defined __APPLE__) || (defined __FreeBSD__)
     #include <xlocale.h>
 #endif
 
