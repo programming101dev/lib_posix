@@ -8,6 +8,27 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
+# Detect macOS and set the SDK path dynamically
+if(APPLE)
+    execute_process(
+            COMMAND xcrun --sdk macosx --show-sdk-path
+            OUTPUT_VARIABLE MACOSX_SDK_PATH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(MACOSX_SDK_PATH)
+        message(STATUS "Using macOS SDK path: ${MACOSX_SDK_PATH}")
+        set(CMAKE_OSX_SYSROOT ${MACOSX_SDK_PATH})
+
+        # Append the SDK's library directory to the global library search paths
+        list(APPEND CMAKE_LIBRARY_PATH "${MACOSX_SDK_PATH}/usr/lib")
+        message(STATUS "Updated library search paths: ${CMAKE_LIBRARY_PATH}")
+    else()
+        message(FATAL_ERROR "Unable to determine macOS SDK path.")
+    endif()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/include")
+endif()
+
 # Source files for the library
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/aio.c
@@ -112,6 +133,11 @@ set(HEADER_LIST_SYS
 add_library(p101_posix SHARED ${SOURCES})
 target_include_directories(p101_posix PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(p101_posix PRIVATE /usr/local/include)
+
+message(STATUS "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+get_target_property(INCLUDE_DIRS p101_posix INCLUDE_DIRECTORIES)
+message(STATUS "Include directories for p101_posix: ${INCLUDE_DIRS}")
 
 # Extract the compiler name without the path
 get_filename_component(COMPILER_NAME "${CMAKE_C_COMPILER}" NAME)
@@ -241,6 +267,7 @@ target_link_libraries(p101_posix PRIVATE p101_env)
 target_link_libraries(p101_posix PRIVATE p101_c)
 
 find_library(ICONV_LIBRARY iconv)
+message(STATUS, "found iconv library: ${ICONV_LIBRARY}")
 
 if(ICONV_LIBRARY)
     target_link_libraries(p101_posix PRIVATE ${ICONV_LIBRARY})
@@ -282,9 +309,9 @@ find_program(CPPCHECK NAMES ${CPPCHECK_NAME} REQUIRED)
 
 # Format source files using clang-format
 add_custom_target(format
-    COMMAND ${CLANG_FORMAT} --style=file -i ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Running clang-format"
+        COMMAND ${CLANG_FORMAT} --style=file -i ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang-format"
 )
 
 # Lint source files using clang-tidy
@@ -305,10 +332,12 @@ add_custom_target(cppcheck
 if (CMAKE_C_COMPILER MATCHES ".*/clang.*")
     # Add a custom target for clang --analyze
     add_custom_target(analysis
-        COMMAND ${CMAKE_C_COMPILER} --analyze --analyzer-output text -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${CMAKE_C_FLAGS} ${STANDARD_FLAGS} -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS}
+        COMMAND ${CMAKE_C_COMPILER} --analyze --analyzer-output text -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${SOURCES} ${HEADER_LIST} ${HEADER_LIST_ARPA} ${HEADER_LIST_NET} ${HEADER_LIST_SYS} -I${CMAKE_SOURCE_DIR}/include
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Running clang --analyze"
     )
+
+#    ${CMAKE_C_FLAGS} ${STANDARD_FLAGS}
 
     # Add a custom command to delete .gch files after the analysis
     add_custom_command(
