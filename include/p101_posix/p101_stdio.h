@@ -25,7 +25,6 @@ extern "C"
 {
 #endif
 
-    char   *p101_ctermid(const struct p101_env *env, char *s);
     FILE   *p101_fdopen(const struct p101_env *env, struct p101_error *err, int fildes, const char *mode);
     int     p101_fileno(const struct p101_env *env, struct p101_error *err, FILE *stream);
     void    p101_flockfile(const struct p101_env *env, FILE *file);
@@ -49,5 +48,8 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// char   *p101_ctermid(const struct p101_env *env, char *s); - use ttyname_r instead
 
 #endif    // LIBP101_POSIX_P101_STDIO_H

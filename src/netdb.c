@@ -79,6 +79,7 @@ int p101_getaddrinfo(const struct p101_env *env, struct p101_error *err, const c
     return ret_val;
 }
 
+/*
 struct hostent *p101_gethostent(const struct p101_env *env)
 {
     struct hostent *ret_val;
@@ -89,6 +90,7 @@ struct hostent *p101_gethostent(const struct p101_env *env)
 
     return ret_val;
 }
+*/
 
 int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const struct sockaddr *restrict sa, socklen_t salen, char *restrict node, socklen_t nodelen, char *restrict service, socklen_t servicelen, int flags)
 {
@@ -107,6 +109,7 @@ int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const s
     return ret_val;
 }
 
+/*
 struct netent *p101_getnetbyaddr(const struct p101_env *env, uint32_t net, int type)
 {
     struct netent *ret_val;
@@ -117,7 +120,9 @@ struct netent *p101_getnetbyaddr(const struct p101_env *env, uint32_t net, int t
 
     return ret_val;
 }
+*/
 
+/*
 struct netent *p101_getnetbyname(const struct p101_env *env, const char *name)
 {
     struct netent *ret_val;
@@ -128,7 +133,9 @@ struct netent *p101_getnetbyname(const struct p101_env *env, const char *name)
 
     return ret_val;
 }
+*/
 
+/*
 struct netent *p101_getnetent(const struct p101_env *env)
 {
     struct netent *ret_val;
@@ -139,7 +146,9 @@ struct netent *p101_getnetent(const struct p101_env *env)
 
     return ret_val;
 }
+*/
 
+/*
 struct protoent *p101_getprotobyname(const struct p101_env *env, const char *name)
 {
     struct protoent *ret_val;
@@ -150,7 +159,9 @@ struct protoent *p101_getprotobyname(const struct p101_env *env, const char *nam
 
     return ret_val;
 }
+*/
 
+/*
 struct protoent *p101_getprotobynumber(const struct p101_env *env, int proto)
 {
     struct protoent *ret_val;
@@ -161,7 +172,9 @@ struct protoent *p101_getprotobynumber(const struct p101_env *env, int proto)
 
     return ret_val;
 }
+*/
 
+/*
 struct protoent *p101_getprotoent(const struct p101_env *env)
 {
     struct protoent *ret_val;
@@ -172,7 +185,9 @@ struct protoent *p101_getprotoent(const struct p101_env *env)
 
     return ret_val;
 }
+*/
 
+/*
 struct servent *p101_getservbyname(const struct p101_env *env, const char *name, const char *proto)
 {
     struct servent *ret_val;
@@ -183,7 +198,9 @@ struct servent *p101_getservbyname(const struct p101_env *env, const char *name,
 
     return ret_val;
 }
+*/
 
+/*
 struct servent *p101_getservbyport(const struct p101_env *env, int port, const char *proto)
 {
     struct servent *ret_val;
@@ -194,7 +211,9 @@ struct servent *p101_getservbyport(const struct p101_env *env, int port, const c
 
     return ret_val;
 }
+*/
 
+/*
 struct servent *p101_getservent(const struct p101_env *env)
 {
     struct servent *ret_val;
@@ -205,6 +224,7 @@ struct servent *p101_getservent(const struct p101_env *env)
 
     return ret_val;
 }
+*/
 
 void p101_sethostent(const struct p101_env *env, int stayopen)
 {

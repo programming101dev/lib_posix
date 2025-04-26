@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_stdio.h"
 
+/*
 char *p101_ctermid(const struct p101_env *env, char *s)
 {
     char *ret_val;
@@ -26,6 +27,7 @@ char *p101_ctermid(const struct p101_env *env, char *s)
 
     return ret_val;
 }
+*/
 
 FILE *p101_fdopen(const struct p101_env *env, struct p101_error *err, int fildes, const char *mode)
 {
