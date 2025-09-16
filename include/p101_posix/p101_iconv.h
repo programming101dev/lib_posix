@@ -17,12 +17,12 @@
  * limitations under the License.
  */
 
-#if defined(__clang__)
+#ifdef __clang__
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wreserved-identifier"
 #endif
 #include <iconv.h>
-#if defined(__clang__)
+#ifdef __clang__
     #pragma clang diagnostic pop
 #endif
 #include <p101_env/env.h>

@@ -138,7 +138,7 @@ int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 #endif
-#if defined(__clang__)
+#ifdef __clang__
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
 #endif
@@ -146,7 +146,7 @@ int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error
 #if defined(__GNUC__) && !defined(__clang__)
     #pragma GCC diagnostic pop
 #endif
-#if defined(__clang__)
+#ifdef __clang__
     #pragma clang diagnostic pop
 #endif
 
