@@ -78,14 +78,16 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
 int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errnum, char *strerrbuf, size_t buflen)
 {
     int ret_val;
-
-    P101_TRACE(env);
-    ret_val = 0;
-    errno = 0;
-
 #if defined(__GLIBC__) && defined(_GNU_SOURCE)
     /* GNU variant: returns char* (may be strerrbuf or static storage). */
     char *res;
+#endif
+
+    P101_TRACE(env);
+    ret_val = 0;
+    errno   = 0;
+
+#if defined(__GLIBC__) && defined(_GNU_SOURCE)
 
     res = strerror_r(errnum, strerrbuf, buflen);
 
