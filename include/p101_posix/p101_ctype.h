@@ -23,10 +23,8 @@
     #include <xlocale.h>
 #else
     #include <locale.h>
-    #if defined(__has_include)
-        #if __has_include(<xlocale.h>)
-            #include <xlocale.h>
-        #endif
+    #if defined(__clang__) && defined(__GLIBC__)
+        #include <bits/types/locale_t.h>
     #endif
 #endif
 
