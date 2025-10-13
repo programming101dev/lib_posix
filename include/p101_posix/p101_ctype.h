@@ -2,7 +2,7 @@
 #define LIBP101_POSIX_P101_CTYPE_H
 
 /*
- * Copyright 2022-2024 D'Arcy Smith.
+ * Copyright 2022-2025 D'Arcy Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,11 @@
     #include <xlocale.h>
 #else
     #include <locale.h>
+    #if defined(__has_include)
+        #if __has_include(<xlocale.h>)
+            #include <xlocale.h>
+        #endif
+    #endif
 #endif
 
 #ifdef __cplusplus
