@@ -77,68 +77,65 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
 
 int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errnum, char *strerrbuf, size_t buflen)
 {
-    int ret_val;
-#if defined(__GLIBC__) && defined(_GNU_SOURCE)
-    /* GNU variant: returns char* (may be strerrbuf or static storage). */
-    char *res;
-#endif
+    int ret_val = 0;
 
     P101_TRACE(env);
-    ret_val = 0;
-    errno   = 0;
+    errno = 0;
 
 #if defined(__GLIBC__) && defined(_GNU_SOURCE)
-
-    res = strerror_r(errnum, strerrbuf, buflen);
-
-    if(res == NULL)
+    /* GNU variant: returns char* (may be strerrbuf or static storage). */
     {
-        /* Treat as failure; errno should be set by strerror_r, but be defensive. */
-        ret_val = (errno != 0) ? errno : EINVAL;
-        errno   = ret_val;
-        P101_ERROR_RAISE_ERRNO(err, errno);
-        return ret_val;
-    }
+        char *res = strerror_r(errnum, strerrbuf, buflen);
 
-    /* Ensure result ends up in caller buffer for consistent behavior. */
-    if(res != strerrbuf)
-    {
-        size_t n;
-        size_t copy;
-
-        if(buflen == 0)
+        if(res == NULL)
         {
-            ret_val = ERANGE;
-            errno   = ret_val;
-            P101_ERROR_RAISE_ERRNO(err, errno);
-            return ret_val;
+            ret_val = (errno != 0) ? errno : EINVAL;
         }
-
-        n    = strlen(res);
-        copy = (n < buflen - 1) ? n : (buflen > 0 ? buflen - 1 : 0);
-
-        if(copy > 0)
+        else if(res != strerrbuf)
         {
-            memcpy(strerrbuf, res, copy);
-        }
-        strerrbuf[copy] = '\0';
-    }
-    /* Success path: ret_val already 0. */
+            /* Ensure result is in caller buffer for consistent behavior. */
+            if(buflen == 0)
+            {
+                ret_val = ERANGE;
+            }
+            else
+            {
+                size_t n       = strlen(res);
+                size_t maxcopy = buflen - 1;
+                size_t copy    = n;
 
+                if(copy > maxcopy)
+                {
+                    copy = maxcopy;
+                }
+                if(copy > 0)
+                {
+                    memcpy(strerrbuf, res, copy);
+                }
+                strerrbuf[copy] = '\0';
+            }
+        }
+    }
 #else
     /* POSIX variant: returns int (0 on success, error number on failure). */
     ret_val = strerror_r(errnum, strerrbuf, buflen);
-
     if(ret_val != 0)
     {
-        /* Some implementations set errno to ret_val; normalize it. */
+        /* Normalize errno so downstream sees the right code. */
         errno = ret_val;
-        P101_ERROR_RAISE_ERRNO(err, errno);
-        return ret_val;
     }
 #endif
 
-    return 0;
+    if(ret_val != 0)
+    {
+        if(errno == 0)
+        {
+            errno = ret_val;
+        }
+        P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+
+    return ret_val;
 }
 
 char *p101_strndup(const struct p101_env *env, struct p101_error *err, const char *s, size_t size)
