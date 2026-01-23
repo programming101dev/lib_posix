@@ -85,7 +85,7 @@ int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errn
 #if defined(__GLIBC__) && defined(_GNU_SOURCE)
     /* GNU variant: returns char* (may be strerrbuf or static storage). */
     {
-        char *res = strerror_r(errnum, strerrbuf, buflen);
+        const char *res = strerror_r(errnum, strerrbuf, buflen);
 
         if(res == NULL)
         {
@@ -119,11 +119,6 @@ int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errn
 #else
     /* POSIX variant: returns int (0 on success, error number on failure). */
     ret_val = strerror_r(errnum, strerrbuf, buflen);
-    if(ret_val != 0)
-    {
-        /* Normalize errno so downstream sees the right code. */
-        errno = ret_val;
-    }
 #endif
 
     if(ret_val != 0)
@@ -132,6 +127,7 @@ int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errn
         {
             errno = ret_val;
         }
+
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
