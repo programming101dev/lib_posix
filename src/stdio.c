@@ -257,7 +257,7 @@ FILE *p101_popen(const struct p101_env *env, struct p101_error *err, const char 
 
     P101_TRACE(env);
     errno   = 0;
-    ret_val = popen(command, mode);    // NOLINT(cert-env33-c)
+    ret_val = popen(command, mode);    // NOLINT(cert-env33-c, bugprone-command-processor)
 
     if(ret_val == NULL)
     {

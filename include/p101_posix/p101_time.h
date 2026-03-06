@@ -20,8 +20,14 @@
 #include <p101_env/env.h>
 #include <time.h>
 
-#if (defined __APPLE__) || (defined __FreeBSD__)
+#if defined(__APPLE__) || defined(__FreeBSD__)
     #include <xlocale.h>
+#endif
+
+#if defined(__clang__) || defined(__GNUC__)
+    #define P101_ATTR_STRFTIME(format_index) __attribute__((format(strftime, format_index, 0)))
+#else
+    #define P101_ATTR_STRFTIME(format_index)
 #endif
 
 #ifdef __cplusplus
@@ -35,7 +41,7 @@ extern "C"
     struct tm *p101_gmtime_r(const struct p101_env *env, struct p101_error *err, const time_t *restrict timer, struct tm *restrict result);
     struct tm *p101_localtime_r(const struct p101_env *env, struct p101_error *err, const time_t *restrict timer, struct tm *restrict result);
     int        p101_nanosleep(const struct p101_env *env, struct p101_error *err, const struct timespec *rqtp, struct timespec *rmtp);
-    size_t     p101_strftime_l(const struct p101_env *env, char *restrict s, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr, locale_t locale);
+    size_t     p101_strftime_l(const struct p101_env *env, char *restrict s, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr, locale_t locale) P101_ATTR_STRFTIME(4);
     void       p101_tzset(const struct p101_env *env);
 
 #ifdef __cplusplus
