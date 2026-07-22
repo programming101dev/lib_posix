@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_pthread.h"
 
+/* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void))
 {
     int ret_val;
@@ -318,6 +319,7 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
     return ret_val;
 }
 
+/* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg)
 {
     int ret_val;

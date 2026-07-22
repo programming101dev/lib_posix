@@ -442,7 +442,7 @@ pid_t p101_getpgid(const struct p101_env *env, struct p101_error *err, pid_t pid
     errno   = 0;
     ret_val = getpgid(pid);
 
-    if(ret_val == (pid_t)-1)
+    if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
@@ -491,7 +491,7 @@ pid_t p101_getsid(const struct p101_env *env, struct p101_error *err, pid_t pid)
     errno   = 0;
     ret_val = getsid(pid);
 
-    if(ret_val == (pid_t)-1)
+    if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }

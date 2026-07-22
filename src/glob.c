@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_glob.h"
 
+/* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno), glob_t *restrict pglob)
 {
     int ret_val;

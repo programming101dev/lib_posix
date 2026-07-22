@@ -118,3 +118,10 @@ set(p101_posix_LINK_LIBRARIES
         p101_c
         iconv
 )
+
+# Per-file flag opt-out: -fharden-control-flow-redundancy probes as
+# supported but GCC hard-errors on any function that calls setjmp, which this
+# wrapper does. Keep the flag on for every other file; disable it only here.
+set(P101_FILE_FLAG_OPTOUTS
+        "src/setjmp.c -fharden-control-flow-redundancy"
+)
