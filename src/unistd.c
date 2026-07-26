@@ -24,12 +24,8 @@ void p101_env_track_fork(const struct p101_env *env, long parent_pid, long child
 #endif
 
 #ifndef P101_TRACK_EXEC
-    #define P101_TRACK_EXEC(env, target)                                                                                                                                                                                                                           \
-        do                                                                                                                                                                                                                                                         \
-        {                                                                                                                                                                                                                                                          \
-            (void)(env);                                                                                                                                                                                                                                           \
-            (void)(target);                                                                                                                                                                                                                                        \
-        } while(0)
+void p101_env_track_exec(const struct p101_env *env, const char *target, const char *file_name, const char *function_name, int line_number);
+    #define P101_TRACK_EXEC(env, target) p101_env_track_exec((env), (target), __FILE__, __func__, __LINE__)
 #endif
 
 int p101_access(const struct p101_env *env, struct p101_error *err, const char *path, int amode)
