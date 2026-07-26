@@ -23,6 +23,15 @@ void p101_env_track_fork(const struct p101_env *env, long parent_pid, long child
     #define P101_TRACK_FORK(env, parent_pid, child_pid) p101_env_track_fork((env), (parent_pid), (child_pid), __FILE__, __func__, __LINE__)
 #endif
 
+#ifndef P101_TRACK_EXEC
+    #define P101_TRACK_EXEC(env, target)                                                                                                                                                                                                                           \
+        do                                                                                                                                                                                                                                                         \
+        {                                                                                                                                                                                                                                                          \
+            (void)(env);                                                                                                                                                                                                                                           \
+            (void)(target);                                                                                                                                                                                                                                        \
+        } while(0)
+#endif
+
 int p101_access(const struct p101_env *env, struct p101_error *err, const char *path, int amode)
 {
     int ret_val;
@@ -215,6 +224,7 @@ int p101_execv(const struct p101_env *env, struct p101_error *err, const char *p
     int ret_val;
 
     P101_TRACE(env);
+    P101_TRACK_EXEC(env, path);
     errno   = 0;
     ret_val = execv(path, argv);
 
@@ -231,6 +241,7 @@ int p101_execve(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_TRACK_EXEC(env, path);
     errno   = 0;
     ret_val = execve(path, argv, envp);
 
@@ -247,6 +258,7 @@ int p101_execvp(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_TRACK_EXEC(env, file);
     errno   = 0;
     ret_val = execvp(file, argv);
 
