@@ -112,6 +112,10 @@ int p101_close(const struct p101_env *env, struct p101_error *err, int fildes)
 
     if(ret_val == -1)
     {
+        if(errno == EBADF)
+        {
+            P101_TRACK_CLOSE(env, fildes);
+        }
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
     else
