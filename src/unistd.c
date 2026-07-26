@@ -18,6 +18,11 @@
 
 // #include <unistd.h>
 
+#ifndef P101_TRACK_FORK
+void p101_env_track_fork(const struct p101_env *env, long parent_pid, long child_pid, const char *file_name, const char *function_name, int line_number);
+    #define P101_TRACK_FORK(env, parent_pid, child_pid) p101_env_track_fork((env), (parent_pid), (child_pid), __FILE__, __func__, __LINE__)
+#endif
+
 int p101_access(const struct p101_env *env, struct p101_error *err, const char *path, int amode)
 {
     int ret_val;
@@ -328,6 +333,24 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
     if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else if(ret_val == 0)
+    {
+        pid_t child_pid;
+        pid_t parent_pid;
+
+        parent_pid = getppid();
+        child_pid  = getpid();
+        P101_TRACK_FORK(env, parent_pid, child_pid);
+    }
+    else
+    {
+        pid_t child_pid;
+        pid_t parent_pid;
+
+        parent_pid = getpid();
+        child_pid  = ret_val;
+        P101_TRACK_FORK(env, parent_pid, child_pid);
     }
 
     return ret_val;
