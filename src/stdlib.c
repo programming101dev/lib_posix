@@ -56,8 +56,19 @@ char *p101_mkdtemp(const struct p101_env *env, struct p101_error *err, char *nam
 int p101_mkstemp(const struct p101_env *env, struct p101_error *err, char *name_template)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "mkstemp");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = mkstemp(name_template);
 
@@ -65,6 +76,12 @@ int p101_mkstemp(const struct p101_env *env, struct p101_error *err, char *name_
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_TRACK_OPEN(env, ret_val);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

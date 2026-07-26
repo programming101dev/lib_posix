@@ -16,6 +16,37 @@
 
 #include "p101_posix/p101_wordexp.h"
 
+static const char *wordexp_error_message(int err_code);
+
+static const char *wordexp_error_message(int err_code)
+{
+    const char *msg;
+
+    switch(err_code)
+    {
+        case WRDE_BADCHAR:
+            msg = "Illegal character in word expansion";
+            break;
+        case WRDE_BADVAL:
+            msg = "Undefined shell variable in word expansion";
+            break;
+        case WRDE_CMDSUB:
+            msg = "Command substitution requested in word expansion";
+            break;
+        case WRDE_NOSPACE:
+            msg = "Out of memory during word expansion";
+            break;
+        case WRDE_SYNTAX:
+            msg = "Shell syntax error in word expansion";
+            break;
+        default:
+            msg = "Unknown word expansion error";
+            break;
+    }
+
+    return msg;
+}
+
 int p101_wordexp(const struct p101_env *env, struct p101_error *err, const char *restrict words, wordexp_t *restrict pwordexp, int flags)
 {
     int ret_val;
@@ -26,8 +57,7 @@ int p101_wordexp(const struct p101_env *env, struct p101_error *err, const char 
 
     if(ret_val != 0)
     {
-        // TODO: message
-        P101_ERROR_RAISE_SYSTEM(err, "", ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, wordexp_error_message(ret_val), ret_val);
     }
 
     return ret_val;

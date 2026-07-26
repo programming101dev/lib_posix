@@ -27,8 +27,7 @@ int p101_fnmatch(const struct p101_env *env, struct p101_error *err, const char 
 
     if(ret_val != 0 && ret_val != FNM_NOMATCH)
     {
-        // TODO: what message?
-        P101_ERROR_RAISE_SYSTEM(err, "", ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, "Invalid filename match pattern", ret_val);
     }
 
     return ret_val;

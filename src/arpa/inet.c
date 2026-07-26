@@ -70,8 +70,22 @@ in_addr_t p101_inet_addr(const struct p101_env *env, struct p101_error *err, con
 
     if(ret_val == (in_addr_t)-1)
     {
-        // TODO: message & code
-        P101_ERROR_RAISE_SYSTEM(err, "", -1);
+        struct in_addr addr;
+        int            valid;
+
+        valid = inet_pton(AF_INET, cp, &addr);
+
+        if(valid != 1)
+        {
+            if(valid == 0)
+            {
+                P101_ERROR_RAISE_ERRNO(err, EINVAL);
+            }
+            else
+            {
+                P101_ERROR_RAISE_ERRNO(err, errno);
+            }
+        }
     }
 
     return ret_val;
@@ -116,7 +130,7 @@ int p101_inet_pton(const struct p101_env *env, struct p101_error *err, int af, c
     {
         if(ret_val == 0)
         {
-            // TODO: what?
+            P101_ERROR_RAISE_ERRNO(err, EINVAL);
         }
         else
         {

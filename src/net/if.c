@@ -63,10 +63,5 @@ unsigned p101_if_nametoindex(const struct p101_env *env, const char *ifname)
     errno   = 0;
     ret_val = if_nametoindex(ifname);
 
-    if(ret_val == 0)
-    {
-        // TODO: what?
-    }
-
     return ret_val;
 }

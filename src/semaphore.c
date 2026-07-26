@@ -15,6 +15,33 @@
  */
 
 #include "p101_posix/p101_semaphore.h"
+#include <fcntl.h>
+#include <stdarg.h>
+
+static int    sem_open_uses_create_args(int oflag);
+static mode_t sem_open_mode_arg(va_list *args);
+
+static int sem_open_uses_create_args(int oflag)
+{
+    int uses_arg;
+
+    uses_arg = ((oflag & O_CREAT) == O_CREAT);
+
+    return uses_arg;
+}
+
+static mode_t sem_open_mode_arg(va_list *args)
+{
+    mode_t mode;
+
+#if defined(__APPLE__) || defined(__FreeBSD__)
+    mode = (mode_t)va_arg(*args, int);
+#else
+    mode = va_arg(*args, mode_t);
+#endif
+
+    return mode;
+}
 
 int p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *sem)
 {
@@ -34,12 +61,28 @@ int p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *se
 
 sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const char *name, int oflag, ...)
 {
-    sem_t *ret_val;
+    sem_t  *ret_val;
+    va_list args;
 
     P101_TRACE(env);
     errno = 0;
-    // TODO: fix the ... or remove the function
-    ret_val = sem_open(name, oflag, 0);
+
+    if(sem_open_uses_create_args(oflag))
+    {
+        mode_t       mode;
+        unsigned int value;
+
+        va_start(args, oflag);
+        mode  = sem_open_mode_arg(&args);
+        value = va_arg(args, unsigned int);
+        va_end(args);
+
+        ret_val = sem_open(name, oflag, mode, value);
+    }
+    else
+    {
+        ret_val = sem_open(name, oflag);
+    }
 
     if(ret_val == SEM_FAILED)
     {

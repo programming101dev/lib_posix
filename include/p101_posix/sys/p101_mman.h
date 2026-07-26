@@ -20,12 +20,20 @@
 #include <p101_env/env.h>
 #include <sys/types.h>
 
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-    void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len, int prot, int flags, int fildes, off_t off);
+    void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len, int prot, int flags, int fildes, off_t off) P101_ATTR_WARN_UNUSED_RESULT;
     int   p101_mprotect(const struct p101_env *env, struct p101_error *err, void *addr, size_t len, int prot);
     int   p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len);
 

@@ -20,13 +20,21 @@
 #include <p101_env/env.h>
 #include <semaphore.h>
 
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     int    p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *sem);
-    sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const char *name, int oflag, ...);
+    sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const char *name, int oflag, ...) P101_ATTR_WARN_UNUSED_RESULT;
     int    p101_sem_post(const struct p101_env *env, struct p101_error *err, sem_t *sem);
     int    p101_sem_trywait(const struct p101_env *env, struct p101_error *err, sem_t *sem);
     int    p101_sem_unlink(const struct p101_env *env, struct p101_error *err, const char *name);

@@ -20,6 +20,14 @@
 #include <dirent.h>
 #include <p101_env/env.h>
 
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -28,8 +36,8 @@ extern "C"
     int            p101_alphasort(const struct p101_env *env, struct p101_error *err, const struct dirent **d1, const struct dirent **d2);
     int            p101_closedir(const struct p101_env *env, struct p101_error *err, DIR *dirp);
     int            p101_dirfd(const struct p101_env *env, struct p101_error *err, DIR *dirp);
-    DIR           *p101_fdopendir(const struct p101_env *env, struct p101_error *err, int fd);
-    DIR           *p101_opendir(const struct p101_env *env, struct p101_error *err, const char *dirname);
+    DIR           *p101_fdopendir(const struct p101_env *env, struct p101_error *err, int fd) P101_ATTR_WARN_UNUSED_RESULT;
+    DIR           *p101_opendir(const struct p101_env *env, struct p101_error *err, const char *dirname) P101_ATTR_WARN_UNUSED_RESULT;
     struct dirent *p101_readdir(const struct p101_env *env, struct p101_error *err, DIR *dirp);
     void           p101_rewinddir(const struct p101_env *env, DIR *dirp);
     int            p101_scandir(const struct p101_env *env, struct p101_error *err, const char *dir, struct dirent ***namelist, int (*sel)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **));

@@ -19,8 +19,19 @@
 int p101_accept(const struct p101_env *env, struct p101_error *err, int socket, struct sockaddr *restrict address, socklen_t *restrict address_len)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "accept");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = accept(socket, address, address_len);
 
@@ -28,6 +39,15 @@ int p101_accept(const struct p101_env *env, struct p101_error *err, int socket, 
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        /* The accepted connection is a NEW descriptor, distinct from the
+         * listening socket. Forgetting to close it is the classic server fd
+         * leak, so it goes in the ledger. */
+        P101_TRACK_OPEN(env, ret_val);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -275,8 +295,19 @@ int p101_sockatmark(const struct p101_env *env, struct p101_error *err, int s)
 int p101_socket(const struct p101_env *env, struct p101_error *err, int domain, int type, int protocol)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "socket");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = socket(domain, type, protocol);
 
@@ -284,6 +315,12 @@ int p101_socket(const struct p101_env *env, struct p101_error *err, int domain, 
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_TRACK_OPEN(env, ret_val);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -291,8 +328,19 @@ int p101_socket(const struct p101_env *env, struct p101_error *err, int domain, 
 int p101_socketpair(const struct p101_env *env, struct p101_error *err, int domain, int type, int protocol, int socket_vector[2])
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "socketpair");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = socketpair(domain, type, protocol, socket_vector);
 
@@ -300,6 +348,14 @@ int p101_socketpair(const struct p101_env *env, struct p101_error *err, int doma
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        /* Two descriptors come back, and both have to be closed. */
+        P101_TRACK_OPEN(env, socket_vector[0]);
+        P101_TRACK_OPEN(env, socket_vector[1]);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

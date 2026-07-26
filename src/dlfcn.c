@@ -17,6 +17,22 @@
 #include "p101_posix/p101_dlfcn.h"
 #include <dlfcn.h>
 
+static int dl_error_code(void);
+
+static int dl_error_code(void)
+{
+    int err_code;
+
+    err_code = errno;
+
+    if(err_code == 0)
+    {
+        err_code = EINVAL;
+    }
+
+    return err_code;
+}
+
 int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handle)
 {
     int ret_val;
@@ -28,9 +44,11 @@ int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handl
     if(ret_val != 0)
     {
         const char *str;
+        int         err_code;
 
-        str = p101_dlerror(env);
-        P101_ERROR_RAISE_SYSTEM(err, str, ret_val);
+        err_code = dl_error_code();
+        str      = p101_dlerror(env);
+        P101_ERROR_RAISE_SYSTEM(err, str, err_code);
     }
 
     return ret_val;
@@ -58,10 +76,11 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
     if(ret_val == NULL)
     {
         const char *str;
+        int         err_code;
 
-        str = p101_dlerror(env);
-        // TODO: what to do instead of -1?
-        P101_ERROR_RAISE_SYSTEM(err, str, -1);
+        err_code = dl_error_code();
+        str      = p101_dlerror(env);
+        P101_ERROR_RAISE_SYSTEM(err, str, err_code);
     }
 
     return ret_val;
@@ -69,18 +88,20 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
 
 void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restrict handle, const char *restrict name)
 {
-    void *ret_val;
+    const char *msg;
+    int         err_code;
+    void       *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
-    ret_val = dlsym(handle, name);
+    errno = 0;
+    (void)dlerror();
+    ret_val  = dlsym(handle, name);
+    err_code = dl_error_code();
+    msg      = dlerror();
 
-    if(ret_val == NULL)
+    if(msg != NULL)
     {
-        const char *msg;
-
-        msg = p101_dlerror(env);
-        P101_ERROR_RAISE_SYSTEM(err, msg, 1);
+        P101_ERROR_RAISE_SYSTEM(err, msg, err_code);
     }
 
     return ret_val;

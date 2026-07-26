@@ -80,8 +80,19 @@ int p101_chown(const struct p101_env *env, struct p101_error *err, const char *p
 int p101_close(const struct p101_env *env, struct p101_error *err, int fildes)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "close");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = close(fildes);
 
@@ -89,6 +100,12 @@ int p101_close(const struct p101_env *env, struct p101_error *err, int fildes)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_TRACK_CLOSE(env, fildes);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -112,8 +129,19 @@ size_t p101_confstr(const struct p101_env *env, struct p101_error *err, int name
 int p101_dup(const struct p101_env *env, struct p101_error *err, int fildes)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "dup");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = dup(fildes);    // NOLINT(android-cloexec-dup)
 
@@ -121,6 +149,12 @@ int p101_dup(const struct p101_env *env, struct p101_error *err, int fildes)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_TRACK_OPEN(env, ret_val);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -128,8 +162,19 @@ int p101_dup(const struct p101_env *env, struct p101_error *err, int fildes)
 int p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, int fildes2)
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "dup2");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = dup2(fildes, fildes2);
 
@@ -137,6 +182,18 @@ int p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, in
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        /* dup2() SILENTLY closes fildes2 if it was already open, so the
+         * ledger retires the old entry before recording the new one.
+         * Retiring an untracked descriptor is a no-op, and when
+         * fildes == fildes2 dup2() does nothing -- the net effect here is
+         * still one tracked descriptor, now attributed to this call site. */
+        P101_TRACK_CLOSE(env, fildes2);
+        P101_TRACK_OPEN(env, ret_val);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -625,8 +682,19 @@ int p101_pause(const struct p101_env *env, struct p101_error *err)
 int p101_pipe(const struct p101_env *env, struct p101_error *err, int fildes[2])
 {
     int ret_val;
+    int fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "pipe");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = pipe(fildes);    // NOLINT(android-cloexec-pipe)
 
@@ -634,6 +702,15 @@ int p101_pipe(const struct p101_env *env, struct p101_error *err, int fildes[2])
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        /* Both ends are descriptors, and both have to be closed -- the
+         * half-closed pipe is a favourite student bug. */
+        P101_TRACK_OPEN(env, fildes[0]);
+        P101_TRACK_OPEN(env, fildes[1]);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -673,8 +750,19 @@ ssize_t p101_pwrite(const struct p101_env *env, struct p101_error *err, int fild
 ssize_t p101_read(const struct p101_env *env, struct p101_error *err, int fildes, void *buf, size_t nbyte)
 {
     ssize_t ret_val;
+    int     fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "read");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = read(fildes, buf, nbyte);
 
@@ -682,6 +770,8 @@ ssize_t p101_read(const struct p101_env *env, struct p101_error *err, int fildes
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -1006,8 +1096,19 @@ int p101_unlinkat(const struct p101_env *env, struct p101_error *err, int fd, co
 ssize_t p101_write(const struct p101_env *env, struct p101_error *err, int fildes, const void *buf, size_t nbyte)
 {
     ssize_t ret_val;
+    int     fault;
 
     P101_TRACE(env);
+    fault = p101_env_check_fault(env, "write");
+
+    if(fault != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, fault);
+        P101_TRACE_EXIT(env);
+
+        return -1;
+    }
+
     errno   = 0;
     ret_val = write(fildes, buf, nbyte);
 
@@ -1015,6 +1116,8 @@ ssize_t p101_write(const struct p101_env *env, struct p101_error *err, int filde
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

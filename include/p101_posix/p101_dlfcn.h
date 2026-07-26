@@ -19,6 +19,14 @@
 
 #include <p101_env/env.h>
 
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -26,8 +34,8 @@ extern "C"
 
     int   p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handle);
     char *p101_dlerror(const struct p101_env *env);
-    void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char *file, int mode);
-    void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restrict handle, const char *restrict name);
+    void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char *file, int mode) P101_ATTR_WARN_UNUSED_RESULT;
+    void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restrict handle, const char *restrict name) P101_ATTR_WARN_UNUSED_RESULT;
 
 #ifdef __cplusplus
 }

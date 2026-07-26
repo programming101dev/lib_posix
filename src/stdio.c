@@ -124,11 +124,6 @@ int p101_ftrylockfile(const struct p101_env *env, FILE *file)
     errno   = 0;
     ret_val = ftrylockfile(file);
 
-    if(ret_val != 0)
-    {
-        // TODO: what?
-    }
-
     return ret_val;
 }
 

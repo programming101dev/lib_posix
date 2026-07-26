@@ -24,19 +24,35 @@
     #include <xlocale.h>
 #endif
 
+#ifndef P101_ATTR_MALLOC
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_MALLOC __attribute__((malloc))
+    #else
+        #define P101_ATTR_MALLOC
+    #endif
+#endif
+
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     size_t   p101_mbsnrtowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict dst, const char **restrict src, size_t nmc, size_t len, mbstate_t *restrict ps);
-    FILE    *p101_open_wmemstream(const struct p101_env *env, struct p101_error *err, wchar_t **bufp, size_t *sizep);
+    FILE    *p101_open_wmemstream(const struct p101_env *env, struct p101_error *err, wchar_t **bufp, size_t *sizep) P101_ATTR_WARN_UNUSED_RESULT;
     wchar_t *p101_wcpcpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2);
     wchar_t *p101_wcpncpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2, size_t n);
     int      p101_wcscasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2);
     int      p101_wcscasecmp_l(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, locale_t locale);
     int      p101_wcscoll_l(const struct p101_env *env, struct p101_error *err, const wchar_t *ws1, const wchar_t *ws2, locale_t locale);
-    wchar_t *p101_wcsdup(const struct p101_env *env, struct p101_error *err, const wchar_t *string);
+    wchar_t *p101_wcsdup(const struct p101_env *env, struct p101_error *err, const wchar_t *string) P101_ATTR_MALLOC P101_ATTR_WARN_UNUSED_RESULT;
     int      p101_wcsncasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, size_t n);
     size_t   p101_wcsnlen(const struct p101_env *env, const wchar_t *ws, size_t maxlen);
     size_t   p101_wcsnrtombs(const struct p101_env *env, struct p101_error *err, char *restrict dst, const wchar_t **restrict src, size_t nwc, size_t len, mbstate_t *restrict ps);

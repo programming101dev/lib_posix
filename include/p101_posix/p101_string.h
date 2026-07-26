@@ -25,12 +25,36 @@
     #include <locale.h>
 #endif
 
+#ifndef P101_ATTR_MALLOC
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_MALLOC __attribute__((malloc))
+    #else
+        #define P101_ATTR_MALLOC
+    #endif
+#endif
+
+#ifndef P101_ATTR_ALLOC_SIZE
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
+    #else
+        #define P101_ATTR_ALLOC_SIZE(...)
+    #endif
+#endif
+
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 char  *p101_stpcpy(const struct p101_env *env, char *restrict s1, const char *restrict s2);
 char  *p101_stpncpy(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
 int    p101_strcoll_l(const struct p101_env *env, struct p101_error *err, const char *s1, const char *s2, locale_t locale);
-char  *p101_strdup(const struct p101_env *env, struct p101_error *err, const char *s);
+char  *p101_strdup(const struct p101_env *env, struct p101_error *err, const char *s) P101_ATTR_MALLOC P101_ATTR_WARN_UNUSED_RESULT;
 int    p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errnum, char *strerrbuf, size_t buflen);
-char  *p101_strndup(const struct p101_env *env, struct p101_error *err, const char *s, size_t size);
+char  *p101_strndup(const struct p101_env *env, struct p101_error *err, const char *s, size_t size) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(4) P101_ATTR_WARN_UNUSED_RESULT;
 size_t p101_strnlen(const struct p101_env *env, const char *s, size_t maxlen);
 char  *p101_strsignal(const struct p101_env *env, int signum);
 char  *p101_strtok_r(const struct p101_env *env, char *restrict s, const char *restrict sep, char **restrict state);

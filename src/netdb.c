@@ -72,8 +72,7 @@ int p101_getaddrinfo(const struct p101_env *env, struct p101_error *err, const c
 
     if(ret_val != 0)
     {
-        // TODO: message
-        P101_ERROR_RAISE_SYSTEM(err, "", ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, p101_gai_strerror(env, ret_val), ret_val);
     }
 
     return ret_val;
@@ -102,8 +101,7 @@ int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const s
 
     if(ret_val != 0)
     {
-        // TODO: message
-        P101_ERROR_RAISE_SYSTEM(err, "", ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, p101_gai_strerror(env, ret_val), ret_val);
     }
 
     return ret_val;

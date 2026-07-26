@@ -25,15 +25,23 @@
     #include <locale.h>
 #endif
 
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-    locale_t p101_duplocale(const struct p101_env *env, struct p101_error *err, locale_t locobj);
+    locale_t p101_duplocale(const struct p101_env *env, struct p101_error *err, locale_t locobj) P101_ATTR_WARN_UNUSED_RESULT;
     void     p101_freelocale(const struct p101_env *env, locale_t locobj);
-    locale_t p101_newlocale(const struct p101_env *env, struct p101_error *err, int category_mask, const char *locale, locale_t base);
-    locale_t p101_uselocale(const struct p101_env *env, struct p101_error *err, locale_t newloc);
+    locale_t p101_newlocale(const struct p101_env *env, struct p101_error *err, int category_mask, const char *locale, locale_t base) P101_ATTR_WARN_UNUSED_RESULT;
+    locale_t p101_uselocale(const struct p101_env *env, struct p101_error *err, locale_t newloc) P101_ATTR_WARN_UNUSED_RESULT;
 
 #ifdef __cplusplus
 }

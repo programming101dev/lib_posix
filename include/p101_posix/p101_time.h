@@ -24,10 +24,12 @@
     #include <xlocale.h>
 #endif
 
-#if defined(__clang__) || defined(__GNUC__)
-    #define P101_ATTR_STRFTIME(format_index) __attribute__((format(strftime, format_index, 0)))
-#else
-    #define P101_ATTR_STRFTIME(format_index)
+#ifndef P101_ATTR_STRFTIME
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_STRFTIME(format_index) __attribute__((format(strftime, format_index, 0)))
+    #else
+        #define P101_ATTR_STRFTIME(format_index)
+    #endif
 #endif
 
 #ifdef __cplusplus
