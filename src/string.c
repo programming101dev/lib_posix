@@ -71,6 +71,10 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_TRACK_ALLOC(env, ret_val, strlen(s) + 1U);
+    }
 
     return ret_val;
 }
@@ -145,6 +149,10 @@ char *p101_strndup(const struct p101_env *env, struct p101_error *err, const cha
     if(ret_val == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_TRACK_ALLOC(env, ret_val, strnlen(s, size) + 1U);
     }
 
     return ret_val;
