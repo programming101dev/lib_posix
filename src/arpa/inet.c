@@ -15,6 +15,96 @@
  */
 
 #include "p101_posix/arpa/p101_inet.h"
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+
+enum
+{
+    P101_INET_ADDR_PARTS    = 4,
+    P101_INET_BYTE_BITS     = 8U,
+    P101_INET_CLASS_A_SHIFT = 24U,
+    P101_INET_CLASS_B_SHIFT = 16U,
+    P101_INET_CLASS_C_SHIFT = 8U,
+};
+
+static const unsigned long P101_INET_ADDR_NONE_VALUE = 0xffffffffUL;
+static const unsigned long P101_INET_CLASS_A_REST    = 0xffffffUL;
+static const unsigned long P101_INET_CLASS_B_REST    = 0xffffUL;
+static const unsigned long P101_INET_OCTET_MAX       = 0xffUL;
+
+static int is_inet_addr_none_string(const char *cp);
+
+static int is_inet_addr_none_string(const char *cp)
+{
+    unsigned long parts[P101_INET_ADDR_PARTS];
+    unsigned long value;
+    const char   *p;
+    int           count;
+
+    p     = cp;
+    count = 0;
+
+    while(1)
+    {
+        char *end;
+
+        if(!isdigit((unsigned char)*p) || count >= P101_INET_ADDR_PARTS)
+        {
+            return 0;
+        }
+
+        errno        = 0;
+        parts[count] = strtoul(p, &end, 0);
+        if(end == p || errno != 0)
+        {
+            return 0;
+        }
+        count++;
+
+        if(*end == '\0')
+        {
+            break;
+        }
+        if(*end != '.')
+        {
+            return 0;
+        }
+        p = end + 1;
+    }
+
+    switch(count)
+    {
+        case 1:
+            value = parts[0];
+            break;
+        case 2:
+            if(parts[0] > P101_INET_OCTET_MAX || parts[1] > P101_INET_CLASS_A_REST)
+            {
+                return 0;
+            }
+            value = (parts[0] << P101_INET_CLASS_A_SHIFT) | parts[1];
+            break;
+        case 3:
+            if(parts[0] > P101_INET_OCTET_MAX || parts[1] > P101_INET_OCTET_MAX || parts[2] > P101_INET_CLASS_B_REST)
+            {
+                return 0;
+            }
+            value = (parts[0] << P101_INET_CLASS_A_SHIFT) | (parts[1] << P101_INET_CLASS_B_SHIFT) | parts[2];
+            break;
+        case 4:
+            if(parts[0] > P101_INET_OCTET_MAX || parts[1] > P101_INET_OCTET_MAX || parts[2] > P101_INET_OCTET_MAX || parts[3] > P101_INET_OCTET_MAX)
+            {
+                return 0;
+            }
+            value = (parts[0] << P101_INET_CLASS_A_SHIFT) | (parts[1] << P101_INET_CLASS_B_SHIFT) | (parts[2] << P101_INET_CLASS_C_SHIFT) | parts[3];
+            break;
+        default:
+            return 0;
+    }
+
+    return value == P101_INET_ADDR_NONE_VALUE;
+}
 
 uint32_t p101_htonl(const struct p101_env *env, uint32_t hostlong)
 {
@@ -68,24 +158,9 @@ in_addr_t p101_inet_addr(const struct p101_env *env, struct p101_error *err, con
     errno   = 0;
     ret_val = inet_addr(cp);
 
-    if(ret_val == (in_addr_t)-1)
+    if(ret_val == (in_addr_t)-1 && !is_inet_addr_none_string(cp))
     {
-        struct in_addr addr;
-        int            valid;
-
-        valid = inet_pton(AF_INET, cp, &addr);
-
-        if(valid != 1)
-        {
-            if(valid == 0)
-            {
-                P101_ERROR_RAISE_ERRNO(err, EINVAL);
-            }
-            else
-            {
-                P101_ERROR_RAISE_ERRNO(err, errno);
-            }
-        }
+        P101_ERROR_RAISE_ERRNO(err, EINVAL);
     }
 
     return ret_val;

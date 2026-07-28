@@ -104,7 +104,7 @@ struct dirent *p101_readdir(const struct p101_env *env, struct p101_error *err, 
     errno   = 0;
     ret_val = readdir(dirp);    // cppcheck-suppress readdirCalled
 
-    if(ret_val == NULL)
+    if(ret_val == NULL && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }

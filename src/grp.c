@@ -42,9 +42,9 @@ int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gi
     errno   = 0;
     ret_val = getgrgid_r(gid, grp, buffer, bufsize, result);
 
-    if(ret_val == -1)
+    if(ret_val != 0)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
     return ret_val;
@@ -78,7 +78,7 @@ int p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const ch
 
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
     return ret_val;

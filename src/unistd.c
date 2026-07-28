@@ -89,8 +89,9 @@ int p101_chown(const struct p101_env *env, struct p101_error *err, const char *p
 
 int p101_close(const struct p101_env *env, struct p101_error *err, int fildes)
 {
-    int ret_val;
-    int fault;
+    errno_t actual_error;
+    int     ret_val;
+    int     fault;
 
     P101_TRACE(env);
     fault = p101_env_check_fault(env, "close");
@@ -103,16 +104,17 @@ int p101_close(const struct p101_env *env, struct p101_error *err, int fildes)
         return -1;
     }
 
-    errno   = 0;
-    ret_val = close(fildes);
+    errno        = 0;
+    ret_val      = close(fildes);
+    actual_error = errno;
 
     if(ret_val == -1)
     {
-        if(errno == EBADF)
+        if(actual_error == EBADF)
         {
             P101_TRACK_CLOSE(env, fildes);
         }
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, actual_error);
     }
     else
     {
@@ -376,7 +378,7 @@ long p101_fpathconf(const struct p101_env *env, struct p101_error *err, int fild
     errno   = 0;
     ret_val = fpathconf(fildes, name);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
@@ -690,7 +692,7 @@ long p101_pathconf(const struct p101_env *env, struct p101_error *err, const cha
     errno   = 0;
     ret_val = pathconf(path, name);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
@@ -1006,7 +1008,7 @@ long p101_sysconf(const struct p101_env *env, struct p101_error *err, int name)
     errno   = 0;
     ret_val = sysconf(name);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
