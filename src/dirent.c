@@ -72,7 +72,7 @@ DIR *p101_fdopendir(const struct p101_env *env, struct p101_error *err, int fd)
     errno   = 0;
     ret_val = fdopendir(fd);
 
-    if(ret_val == NULL)
+    if(ret_val == NULL && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }

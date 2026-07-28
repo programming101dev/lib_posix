@@ -232,15 +232,21 @@ FILE *p101_open_memstream(const struct p101_env *env, struct p101_error *err, ch
 
 int p101_pclose(const struct p101_env *env, struct p101_error *err, FILE *stream)
 {
+    int fd;
     int ret_val;
 
     P101_TRACE(env);
+    fd      = fileno(stream);
     errno   = 0;
     ret_val = pclose(stream);
 
     if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else if(fd >= 0)
+    {
+        P101_TRACK_CLOSE(env, fd);
     }
 
     return ret_val;

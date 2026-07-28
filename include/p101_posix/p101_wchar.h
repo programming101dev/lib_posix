@@ -50,7 +50,7 @@ extern "C"
     wchar_t *p101_wcpcpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2);
     wchar_t *p101_wcpncpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2, size_t n);
     int      p101_wcscasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2);
-    int      p101_wcscasecmp_l(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, locale_t locale);
+    /* int      p101_wcscasecmp_l(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, locale_t locale); */
     int      p101_wcscoll_l(const struct p101_env *env, struct p101_error *err, const wchar_t *ws1, const wchar_t *ws2, locale_t locale);
     wchar_t *p101_wcsdup(const struct p101_env *env, struct p101_error *err, const wchar_t *string) P101_ATTR_MALLOC P101_ATTR_WARN_UNUSED_RESULT;
     int      p101_wcsncasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, size_t n);

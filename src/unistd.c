@@ -36,7 +36,7 @@ int p101_access(const struct p101_env *env, struct p101_error *err, const char *
     errno   = 0;
     ret_val = access(path, amode);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
@@ -63,7 +63,7 @@ int p101_chdir(const struct p101_env *env, struct p101_error *err, const char *p
     errno   = 0;
     ret_val = chdir(path);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
@@ -79,7 +79,7 @@ int p101_chown(const struct p101_env *env, struct p101_error *err, const char *p
     errno   = 0;
     ret_val = chown(path, owner, group);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
