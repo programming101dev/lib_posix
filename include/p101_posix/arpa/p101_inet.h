@@ -19,6 +19,7 @@
 
 #include <arpa/inet.h>
 #include <p101_env/env.h>
+#include <sys/socket.h>
 
 #ifdef __cplusplus
 extern "C"
