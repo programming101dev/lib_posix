@@ -237,6 +237,36 @@ static void test_faults_and_balanced_trace(struct p101_env *env, struct p101_err
     p101_env_set_call_observer(env, NULL, NULL);
 }
 
+static void test_short_read_fault(struct p101_error *err)
+{
+    struct p101_env *env;
+    char             input[] = "abcd";
+    char             output[sizeof(input)] = {0};
+    int              fds[2];
+
+    EXPECT(setenv("P101_FAULT_CALL", "1", 1) == 0);
+    EXPECT(setenv("P101_FAULT_NAME", "read", 1) == 0);
+    EXPECT(setenv("P101_FAULT_MODE", "short", 1) == 0);
+    EXPECT(setenv("P101_FAULT_AMOUNT", "2", 1) == 0);
+    env = p101_env_create(err, NULL);
+    EXPECT(unsetenv("P101_FAULT_CALL") == 0);
+    EXPECT(unsetenv("P101_FAULT_NAME") == 0);
+    EXPECT(unsetenv("P101_FAULT_MODE") == 0);
+    EXPECT(unsetenv("P101_FAULT_AMOUNT") == 0);
+    EXPECT(env != NULL);
+
+    if(env != NULL)
+    {
+        EXPECT(p101_pipe(env, err, fds) == 0);
+        EXPECT(p101_write(env, err, fds[1], input, sizeof(input)) == (ssize_t)sizeof(input));
+        EXPECT(p101_read(env, err, fds[0], output, sizeof(output)) == 2);
+        EXPECT(memcmp(input, output, 2U) == 0);
+        EXPECT(p101_close(env, err, fds[0]) == 0);
+        EXPECT(p101_close(env, err, fds[1]) == 0);
+        p101_env_destroy(env);
+    }
+}
+
 int main(void)
 {
     struct event_counts allocation_counts = {0};
@@ -263,6 +293,7 @@ int main(void)
     test_resource_events(env, err);
     test_expected_statuses(env, err);
     test_faults_and_balanced_trace(env, err);
+    test_short_read_fault(err);
 
     p101_env_destroy(env);
     p101_error_destroy(err);

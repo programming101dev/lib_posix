@@ -16,7 +16,7 @@
 
 #include "p101_posix/p101_regex.h"
 #include "p101_posix_internal.h"
-#include <stdlib.h>
+#include <p101_c/p101_stdlib.h>
 
 int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *restrict preg, const char *restrict pattern, int cflags)
 {
@@ -32,21 +32,24 @@ int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *re
         size_t len;
         char  *msg;
 
-        len = regerror(ret_val, preg, NULL, 0);
-        msg = (char *)malloc(len);
+        len = p101_regerror(env, ret_val, preg, NULL, 0);
+        msg = (char *)p101_malloc(env, err, len);
 
-        if(msg == NULL)
+        if(msg == NULL || p101_error_has_error(err))
         {
-            P101_ERROR_RAISE_ERRNO(err, ENOMEM);
+            goto done;
         }
-        else
-        {
-            (void)regerror(ret_val, preg, msg, len);
-            P101_ERROR_RAISE_SYSTEM(err, msg, ret_val);
-            free(msg);
-        }
+
+        (void)p101_regerror(env, ret_val, preg, msg, len);
+        P101_ERROR_RAISE_SYSTEM(err, msg, ret_val);
+        p101_free(env, msg);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "compiled-regex", preg, 0U, NULL);
     }
 
+done:
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -80,5 +83,6 @@ void p101_regfree(const struct p101_env *env, regex_t *preg)
     P101_TRACE(env);
     errno = 0;
     regfree(preg);
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "compiled-regex", preg, NULL);
     P101_TRACE_EXIT(env);
 }

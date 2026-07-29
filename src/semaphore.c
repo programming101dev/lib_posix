@@ -16,6 +16,12 @@
 
 #include "p101_posix/p101_semaphore.h"
 #include "p101_posix_internal.h"
+
+enum
+{
+    RESOURCE_ID_SIZE = 64
+};
+
 #include <fcntl.h>
 #include <stdarg.h>
 
@@ -46,16 +52,22 @@ static mode_t sem_open_mode_arg(va_list *args)
 
 int p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *sem)
 {
-    int ret_val;
+    int  ret_val;
+    char resource_id[RESOURCE_ID_SIZE];
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN(env, err, -1);
+    p101_env_pointer_resource_id(resource_id, sizeof(resource_id), sem);
     errno   = 0;
     ret_val = sem_close(sem);
 
     if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_TRACK_RESOURCE_RELEASE(env, "named-semaphore", resource_id, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -91,6 +103,10 @@ sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const c
     if(ret_val == SEM_FAILED)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "named-semaphore", ret_val, 0U, name);
     }
 
     P101_TRACE_EXIT(env);

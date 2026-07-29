@@ -31,6 +31,10 @@ void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, 
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "mapping", ret_val, len, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -56,16 +60,22 @@ int p101_mprotect(const struct p101_env *env, struct p101_error *err, void *addr
 
 int p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, size_t len)
 {
-    int ret_val;
+    char resource_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
+    int  ret_val;
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN(env, err, -1);
+    p101_env_pointer_resource_id(resource_id, sizeof(resource_id), addr);
     errno   = 0;
     ret_val = munmap(addr, len);
 
     if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_TRACK_RESOURCE_RELEASE(env, "mapping", resource_id, NULL);
     }
 
     P101_TRACE_EXIT(env);

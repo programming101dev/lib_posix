@@ -30,6 +30,10 @@ locale_t p101_duplocale(const struct p101_env *env, struct p101_error *err, loca
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "locale", ret_val, 0U, "duplicate");
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -40,6 +44,7 @@ void p101_freelocale(const struct p101_env *env, locale_t locobj)
     P101_TRACE(env);
     errno = 0;
     freelocale(locobj);
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "locale", locobj, NULL);
     P101_TRACE_EXIT(env);
 }
 
@@ -55,6 +60,14 @@ locale_t p101_newlocale(const struct p101_env *env, struct p101_error *err, int 
     if(ret_val == (locale_t)0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else if(base == (locale_t)0)
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "locale", ret_val, 0U, "new");
+    }
+    else
+    {
+        P101_TRACK_POINTER_RESOURCE_REPLACE(env, "locale", base, ret_val, 0U, "newlocale-base");
     }
 
     P101_TRACE_EXIT(env);

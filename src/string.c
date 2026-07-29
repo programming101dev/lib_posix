@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_string.h"
 #include "p101_posix_internal.h"
+#include <p101_c/p101_string.h>
 #include <string.h>
 
 #ifdef __APPLE__
@@ -79,7 +80,7 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
     }
     else
     {
-        P101_TRACK_ALLOC(env, ret_val, strlen(s) + 1U);
+        P101_TRACK_ALLOC(env, ret_val, p101_strlen(env, s) + 1U);
     }
 
     P101_TRACE_EXIT(env);
@@ -162,7 +163,7 @@ char *p101_strndup(const struct p101_env *env, struct p101_error *err, const cha
     }
     else
     {
-        P101_TRACK_ALLOC(env, ret_val, strnlen(s, size) + 1U);
+        P101_TRACK_ALLOC(env, ret_val, p101_strnlen(env, s, size) + 1U);
     }
 
     P101_TRACE_EXIT(env);

@@ -1,0 +1,6 @@
+# Native queries required while implementing the named POSIX wrapper files.
+src/dirent.c:*:dirfd
+src/dlfcn.c:*:dlerror
+src/stdio.c:*:ferror
+src/stdio.c:*:fileno
+src/unistd.c:*:_exit

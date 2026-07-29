@@ -48,6 +48,10 @@ int p101_iconv_close(const struct p101_env *env, struct p101_error *err, iconv_t
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "iconv-descriptor", cd, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -65,6 +69,10 @@ iconv_t p101_iconv_open(const struct p101_env *env, struct p101_error *err, cons
     if(ret_val == (iconv_t)-1)    // NOLINT(performance-no-int-to-ptr)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "iconv-descriptor", ret_val, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);

@@ -379,8 +379,8 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
         pid_t child_pid;
         pid_t parent_pid;
 
-        parent_pid = getppid();
-        child_pid  = getpid();
+        parent_pid = p101_getppid(env);
+        child_pid  = p101_getpid(env);
         P101_TRACK_FORK(env, parent_pid, child_pid);
     }
     else
@@ -388,7 +388,7 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
         pid_t child_pid;
         pid_t parent_pid;
 
-        parent_pid = getpid();
+        parent_pid = p101_getpid(env);
         child_pid  = ret_val;
         P101_TRACK_FORK(env, parent_pid, child_pid);
     }
@@ -795,10 +795,20 @@ int p101_pipe(const struct p101_env *env, struct p101_error *err, int fildes[2])
 
 ssize_t p101_pread(const struct p101_env *env, struct p101_error *err, int fildes, void *buf, size_t nbyte, off_t offset)
 {
-    ssize_t ret_val;
+    ssize_t                      ret_val;
+    struct p101_env_fault_action fault;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
+    if(p101_env_check_fault_action(env, "pread", &fault))
+    {
+        if(fault.kind == P101_ENV_FAULT_ERROR)
+        {
+            P101_ERROR_RAISE_ERRNO(err, fault.errnum);
+            P101_TRACE_EXIT(env);
+            return -1;
+        }
+        nbyte = p101_posix_short_count(nbyte, fault.amount);
+    }
     errno   = 0;
     ret_val = pread(fildes, buf, nbyte, offset);
 
@@ -813,10 +823,20 @@ ssize_t p101_pread(const struct p101_env *env, struct p101_error *err, int filde
 
 ssize_t p101_pwrite(const struct p101_env *env, struct p101_error *err, int fildes, const void *buf, size_t nbyte, off_t offset)
 {
-    ssize_t ret_val;
+    ssize_t                      ret_val;
+    struct p101_env_fault_action fault;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
+    if(p101_env_check_fault_action(env, "pwrite", &fault))
+    {
+        if(fault.kind == P101_ENV_FAULT_ERROR)
+        {
+            P101_ERROR_RAISE_ERRNO(err, fault.errnum);
+            P101_TRACE_EXIT(env);
+            return -1;
+        }
+        nbyte = p101_posix_short_count(nbyte, fault.amount);
+    }
     errno   = 0;
     ret_val = pwrite(fildes, buf, nbyte, offset);
 
@@ -831,18 +851,19 @@ ssize_t p101_pwrite(const struct p101_env *env, struct p101_error *err, int fild
 
 ssize_t p101_read(const struct p101_env *env, struct p101_error *err, int fildes, void *buf, size_t nbyte)
 {
-    ssize_t ret_val;
-    int     fault;
+    ssize_t                      ret_val;
+    struct p101_env_fault_action fault;
 
     P101_TRACE(env);
-    fault = p101_env_check_fault(env, "read");
-
-    if(fault != 0)
+    if(p101_env_check_fault_action(env, "read", &fault))
     {
-        P101_ERROR_RAISE_ERRNO(err, fault);
-        P101_TRACE_EXIT(env);
-
-        return -1;
+        if(fault.kind == P101_ENV_FAULT_ERROR)
+        {
+            P101_ERROR_RAISE_ERRNO(err, fault.errnum);
+            P101_TRACE_EXIT(env);
+            return -1;
+        }
+        nbyte = p101_posix_short_count(nbyte, fault.amount);
     }
 
     errno   = 0;
@@ -1196,18 +1217,19 @@ int p101_unlinkat(const struct p101_env *env, struct p101_error *err, int fd, co
 
 ssize_t p101_write(const struct p101_env *env, struct p101_error *err, int fildes, const void *buf, size_t nbyte)
 {
-    ssize_t ret_val;
-    int     fault;
+    ssize_t                      ret_val;
+    struct p101_env_fault_action fault;
 
     P101_TRACE(env);
-    fault = p101_env_check_fault(env, "write");
-
-    if(fault != 0)
+    if(p101_env_check_fault_action(env, "write", &fault))
     {
-        P101_ERROR_RAISE_ERRNO(err, fault);
-        P101_TRACE_EXIT(env);
-
-        return -1;
+        if(fault.kind == P101_ENV_FAULT_ERROR)
+        {
+            P101_ERROR_RAISE_ERRNO(err, fault.errnum);
+            P101_TRACE_EXIT(env);
+            return -1;
+        }
+        nbyte = p101_posix_short_count(nbyte, fault.amount);
     }
 
     errno   = 0;

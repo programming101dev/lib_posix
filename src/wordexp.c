@@ -61,6 +61,10 @@ int p101_wordexp(const struct p101_env *env, struct p101_error *err, const char 
     {
         P101_ERROR_RAISE_SYSTEM(err, wordexp_error_message(ret_val), ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "wordexp-result", pwordexp, 0U, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -71,5 +75,6 @@ void p101_wordfree(const struct p101_env *env, wordexp_t *pwordexp)
     P101_TRACE(env);
     errno = 0;
     wordfree(pwordexp);
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "wordexp-result", pwordexp, NULL);
     P101_TRACE_EXIT(env);
 }

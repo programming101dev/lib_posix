@@ -31,7 +31,6 @@ int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -48,6 +47,10 @@ int p101_pthread_attr_destroy(const struct p101_env *env, struct p101_error *err
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-attributes", attr, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -67,7 +70,6 @@ int p101_pthread_attr_getdetachstate(const struct p101_env *env, struct p101_err
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -85,7 +87,6 @@ int p101_pthread_attr_getguardsize(const struct p101_env *env, struct p101_error
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -103,7 +104,6 @@ int p101_pthread_attr_getschedparam(const struct p101_env *env, struct p101_erro
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -120,6 +120,10 @@ int p101_pthread_attr_init(const struct p101_env *env, struct p101_error *err, p
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-attributes", attr, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -139,7 +143,6 @@ int p101_pthread_attr_setdetachstate(const struct p101_env *env, struct p101_err
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -157,7 +160,6 @@ int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -175,7 +177,6 @@ int p101_pthread_attr_setschedparam(const struct p101_env *env, struct p101_erro
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -229,6 +230,10 @@ int p101_pthread_cond_destroy(const struct p101_env *env, struct p101_error *err
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-condition", cond, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -246,6 +251,10 @@ int p101_pthread_cond_init(const struct p101_env *env, struct p101_error *err, p
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-condition", cond, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -319,6 +328,10 @@ int p101_pthread_condattr_destroy(const struct p101_env *env, struct p101_error 
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-condition-attributes", attr, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -336,6 +349,10 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-condition-attributes", attr, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -478,6 +495,10 @@ int p101_pthread_mutex_destroy(const struct p101_env *env, struct p101_error *er
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-mutex", mutex, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -495,6 +516,10 @@ int p101_pthread_mutex_init(const struct p101_env *env, struct p101_error *err, 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-mutex", mutex, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -568,6 +593,10 @@ int p101_pthread_mutexattr_destroy(const struct p101_env *env, struct p101_error
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-mutex-attributes", attr, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -603,6 +632,10 @@ int p101_pthread_mutexattr_init(const struct p101_env *env, struct p101_error *e
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-mutex-attributes", attr, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -658,6 +691,10 @@ int p101_pthread_rwlock_destroy(const struct p101_env *env, struct p101_error *e
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-rwlock", rwlock, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -675,6 +712,10 @@ int p101_pthread_rwlock_init(const struct p101_env *env, struct p101_error *err,
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-rwlock", rwlock, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -784,6 +825,10 @@ int p101_pthread_rwlockattr_destroy(const struct p101_env *env, struct p101_erro
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_RELEASE(env, "pthread-rwlock-attributes", attr, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -801,6 +846,10 @@ int p101_pthread_rwlockattr_init(const struct p101_env *env, struct p101_error *
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "pthread-rwlock-attributes", attr, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);

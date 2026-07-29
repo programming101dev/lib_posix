@@ -21,6 +21,7 @@ void p101_if_freenameindex(const struct p101_env *env, struct if_nameindex *ptr)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "interface-name-index", ptr, NULL);
     if_freenameindex(ptr);
     P101_TRACE_EXIT(env);
 }
@@ -38,7 +39,6 @@ char *p101_if_indextoname(const struct p101_env *env, struct p101_error *err, un
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
-
     P101_TRACE_EXIT(env);
     return ret_val;
 }
@@ -55,6 +55,10 @@ struct if_nameindex *p101_if_nameindex(const struct p101_env *env, struct p101_e
     if(ret_val == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "interface-name-index", ret_val, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);

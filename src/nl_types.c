@@ -16,9 +16,9 @@
 
 #include "p101_posix/p101_nl_types.h"
 #include "p101_posix_internal.h"
-#include <string.h>
+#include <p101_c/p101_string.h>
 
-static char *mutable_fallback(const char *fallback)
+static char *mutable_fallback(const struct p101_env *env, const char *fallback)
 {
     char *result;
 
@@ -27,7 +27,7 @@ static char *mutable_fallback(const char *fallback)
      * type. Copying the pointer representation preserves that native contract
      * without a cast that discards const.
      */
-    memcpy((void *)&result, (const void *)&fallback, sizeof(result));
+    p101_memcpy(env, (void *)&result, (const void *)&fallback, sizeof(result));
     return result;
 }
 
@@ -54,7 +54,7 @@ char *p101_catgets(const struct p101_env *env, struct p101_error *err, nl_catd c
     char *ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, mutable_fallback(s));
+    P101_POSIX_FAULT_RETURN(env, err, mutable_fallback(env, s));
     errno   = 0;
     ret_val = catgets(catd, set_id, msg_id, s);
 

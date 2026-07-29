@@ -16,8 +16,9 @@
 
 #include "../p101_posix_internal.h"
 #include "p101_posix/arpa/p101_inet.h"
-#include <ctype.h>
 #include <limits.h>
+#include <p101_c/p101_ctype.h>
+#include <p101_c/p101_stdlib.h>
 #include <stdlib.h>
 
 enum
@@ -34,9 +35,9 @@ static const unsigned long P101_INET_CLASS_A_REST    = 0xffffffUL;
 static const unsigned long P101_INET_CLASS_B_REST    = 0xffffUL;
 static const unsigned long P101_INET_OCTET_MAX       = 0xffUL;
 
-static int is_inet_addr_none_string(const char *cp);
+static int is_inet_addr_none_string(const struct p101_env *env, const char *cp);
 
-static int is_inet_addr_none_string(const char *cp)
+static int is_inet_addr_none_string(const struct p101_env *env, const char *cp)
 {
     unsigned long parts[P101_INET_ADDR_PARTS];
     unsigned long value;
@@ -50,13 +51,14 @@ static int is_inet_addr_none_string(const char *cp)
     {
         char *end;
 
-        if(!isdigit((unsigned char)*p) || count >= P101_INET_ADDR_PARTS)
+        if(!p101_isdigit(env, (unsigned char)*p) || count >= P101_INET_ADDR_PARTS)
         {
             return 0;
         }
 
-        errno        = 0;
-        parts[count] = strtoul(p, &end, 0);
+        errno = 0;
+        /* P101_ERROR_CONTRACT_ALLOW_NO_ERROR: parser treats conversion failure as an invalid address */
+        parts[count] = p101_strtoul(env, NULL, p, &end, 0);
         if(end == p || errno != 0)
         {
             return 0;
@@ -164,7 +166,7 @@ in_addr_t p101_inet_addr(const struct p101_env *env, struct p101_error *err, con
     errno   = 0;
     ret_val = inet_addr(cp);
 
-    if(ret_val == (in_addr_t)-1 && !is_inet_addr_none_string(cp))
+    if(ret_val == (in_addr_t)-1 && !is_inet_addr_none_string(env, cp))
     {
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
     }

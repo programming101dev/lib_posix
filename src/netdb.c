@@ -53,6 +53,7 @@ void p101_freeaddrinfo(const struct p101_env *env, struct addrinfo *ai)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "address-info", ai, NULL);
     freeaddrinfo(ai);
     P101_TRACE_EXIT(env);
 }
@@ -80,7 +81,11 @@ int p101_getaddrinfo(const struct p101_env *env, struct p101_error *err, const c
 
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, gai_strerror(ret_val), ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, p101_gai_strerror(env, ret_val), ret_val);
+    }
+    else if(res != NULL && *res != NULL)
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "address-info", *res, 0U, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -98,7 +103,7 @@ int p101_getnameinfo(const struct p101_env *env, struct p101_error *err, const s
 
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, gai_strerror(ret_val), ret_val);
+        P101_ERROR_RAISE_SYSTEM(err, p101_gai_strerror(env, ret_val), ret_val);
     }
 
     P101_TRACE_EXIT(env);

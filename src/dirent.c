@@ -31,11 +31,13 @@ int p101_alphasort(const struct p101_env *env, const struct dirent **d1, const s
 
 int p101_closedir(const struct p101_env *env, struct p101_error *err, DIR *dirp)
 {
-    int fd;
-    int ret_val;
+    char resource_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
+    int  fd;
+    int  ret_val;
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN(env, err, -1);
+    p101_env_pointer_resource_id(resource_id, sizeof(resource_id), dirp);
     fd      = dirfd(dirp);
     errno   = 0;
     ret_val = closedir(dirp);
@@ -47,6 +49,11 @@ int p101_closedir(const struct p101_env *env, struct p101_error *err, DIR *dirp)
     else if(fd >= 0)
     {
         P101_TRACK_CLOSE(env, fd);
+        P101_TRACK_RESOURCE_RELEASE(env, "directory-stream", resource_id, NULL);
+    }
+    else
+    {
+        P101_TRACK_RESOURCE_RELEASE(env, "directory-stream", resource_id, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -84,6 +91,10 @@ DIR *p101_fdopendir(const struct p101_env *env, struct p101_error *err, int fd)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else if(ret_val != NULL)
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "directory-stream", ret_val, 0U, "fdopendir");
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -111,6 +122,7 @@ DIR *p101_opendir(const struct p101_env *env, struct p101_error *err, const char
         {
             P101_TRACK_OPEN(env, fd);
         }
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "directory-stream", ret_val, 0U, dirname);
     }
 
     P101_TRACE_EXIT(env);

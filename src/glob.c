@@ -42,6 +42,10 @@ int p101_glob(const struct p101_env *env, struct p101_error *err, const char *re
             P101_ERROR_RAISE_SYSTEM(err, "<unknown glob error>", ret_val);
         }
     }
+    else if(ret_val == 0)
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "glob-result", pglob, 0U, NULL);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -52,5 +56,6 @@ void p101_globfree(const struct p101_env *env, glob_t *pglob)
     P101_TRACE(env);
     errno = 0;
     globfree(pglob);
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "glob-result", pglob, NULL);
     P101_TRACE_EXIT(env);
 }

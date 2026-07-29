@@ -36,10 +36,12 @@ static int dl_error_code(void)
 
 int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handle)
 {
-    int ret_val;
+    char resource_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
+    int  ret_val;
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN(env, err, -1);
+    p101_env_pointer_resource_id(resource_id, sizeof(resource_id), handle);
     errno   = 0;
     ret_val = dlclose(handle);
 
@@ -51,6 +53,10 @@ int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handl
         err_code = dl_error_code();
         str      = dlerror();
         P101_ERROR_RAISE_SYSTEM(err, str, err_code);
+    }
+    else
+    {
+        P101_TRACK_RESOURCE_RELEASE(env, "dynamic-library", resource_id, NULL);
     }
 
     P101_TRACE_EXIT(env);
@@ -86,6 +92,10 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
         err_code = dl_error_code();
         str      = dlerror();
         P101_ERROR_RAISE_SYSTEM(err, str, err_code);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "dynamic-library", ret_val, 0U, file);
     }
 
     P101_TRACE_EXIT(env);

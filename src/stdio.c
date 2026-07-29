@@ -67,6 +67,10 @@ FILE *p101_fdopen(const struct p101_env *env, struct p101_error *err, int fildes
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "stdio-stream", ret_val, 0U, "fdopen");
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -110,6 +114,10 @@ FILE *p101_fmemopen(const struct p101_env *env, struct p101_error *err, void *re
     if(ret_val == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "stdio-stream", ret_val, 0U, "fmemopen");
     }
 
     P101_TRACE_EXIT(env);
@@ -291,6 +299,10 @@ FILE *p101_open_memstream(const struct p101_env *env, struct p101_error *err, ch
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "stdio-stream", ret_val, 0U, "open_memstream");
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -304,8 +316,9 @@ int p101_pclose(const struct p101_env *env, struct p101_error *err, FILE *stream
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN(env, err, -1);
-    fd           = fileno(stream);
-    errno        = 0;
+    fd    = fileno(stream);
+    errno = 0;
+    P101_POSIX_TRACK_POINTER_RELEASE(env, "stdio-stream", stream, "pclose");
     ret_val      = pclose(stream);
     actual_error = errno;
 
@@ -340,6 +353,7 @@ FILE *p101_popen(const struct p101_env *env, struct p101_error *err, const char 
     {
         int fd;
 
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "stdio-stream", ret_val, 0U, "popen");
         fd = fileno(ret_val);
         if(fd >= 0)
         {

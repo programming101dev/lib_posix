@@ -16,6 +16,7 @@
 
 #include "p101_posix/p101_wchar.h"
 #include "p101_posix_internal.h"
+#include <p101_c/p101_wchar.h>
 
 size_t p101_mbsnrtowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict dst, const char **restrict src, size_t nmc, size_t len, mbstate_t *restrict ps)
 {
@@ -49,6 +50,10 @@ FILE *p101_open_wmemstream(const struct p101_env *env, struct p101_error *err, w
     if(ret_val == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_POSIX_TRACK_POINTER_ACQUIRE(env, "stdio-stream", ret_val, 0U, "open_wmemstream");
     }
 
     P101_TRACE_EXIT(env);
@@ -124,7 +129,7 @@ wchar_t *p101_wcsdup(const struct p101_env *env, struct p101_error *err, const w
     }
     else
     {
-        P101_TRACK_ALLOC(env, ret_val, (wcslen(string) + 1U) * sizeof(*ret_val));
+        P101_TRACK_ALLOC(env, ret_val, (p101_wcslen(env, string) + 1U) * sizeof(*ret_val));
     }
 
     P101_TRACE_EXIT(env);
