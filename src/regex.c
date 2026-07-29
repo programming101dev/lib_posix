@@ -37,6 +37,7 @@ int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *re
 
         if(msg == NULL || p101_error_has_error(err))
         {
+            p101_free(env, msg);
             goto done;
         }
 

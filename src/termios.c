@@ -154,7 +154,7 @@ pid_t p101_tcgetsid(const struct p101_env *env, struct p101_error *err, int fild
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = tcgetsid(fildes);
 

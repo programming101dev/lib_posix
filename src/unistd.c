@@ -212,7 +212,7 @@ int p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, in
     return ret_val;
 }
 
-void p101_exit_immediately(const struct p101_env *env, int status)
+void p101_posix_exit_immediately(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     errno = 0;
@@ -366,7 +366,7 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fork();
 
@@ -558,7 +558,7 @@ pid_t p101_getpgid(const struct p101_env *env, struct p101_error *err, pid_t pid
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = getpgid(pid);
 
@@ -612,7 +612,7 @@ pid_t p101_getsid(const struct p101_env *env, struct p101_error *err, pid_t pid)
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = getsid(pid);
 
@@ -1010,7 +1010,7 @@ pid_t p101_setsid(const struct p101_env *env, struct p101_error *err)
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setsid();
 
@@ -1112,7 +1112,7 @@ pid_t p101_tcgetpgrp(const struct p101_env *env, struct p101_error *err, int fil
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = tcgetpgrp(fildes);
 

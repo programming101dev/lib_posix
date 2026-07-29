@@ -22,7 +22,7 @@ pid_t p101_wait(const struct p101_env *env, struct p101_error *err, int *stat_lo
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = wait(stat_loc);
 
@@ -58,7 +58,7 @@ pid_t p101_waitpid(const struct p101_env *env, struct p101_error *err, pid_t pid
     pid_t ret_val;
 
     P101_TRACE(env);
-    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = waitpid(pid, stat_loc, options);
 

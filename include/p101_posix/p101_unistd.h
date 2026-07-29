@@ -33,7 +33,7 @@ extern "C"
     size_t                  p101_confstr(const struct p101_env *env, struct p101_error *err, int name, char *buf, size_t len);
     int                     p101_dup(const struct p101_env *env, struct p101_error *err, int fildes);
     int                     p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, int fildes2);
-    P101_ATTR_NORETURN void p101_exit_immediately(const struct p101_env *env, int status);
+    P101_ATTR_NORETURN void p101_posix_exit_immediately(const struct p101_env *env, int status);
     int                     p101_execv(const struct p101_env *env, struct p101_error *err, const char *path, char *const argv[]);
     int                     p101_execve(const struct p101_env *env, struct p101_error *err, const char *path, char *const argv[], char *const envp[]);
     int                     p101_execvp(const struct p101_env *env, struct p101_error *err, const char *file, char *const argv[]);

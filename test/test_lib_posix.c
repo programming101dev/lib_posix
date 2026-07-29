@@ -7,6 +7,7 @@
 #include <p101_posix/p101_dirent.h>
 #include <p101_posix/p101_nl_types.h>
 #include <p101_posix/p101_pthread.h>
+#include <p101_posix/p101_regex.h>
 #include <p101_posix/p101_stdio.h>
 #include <p101_posix/p101_stdlib.h>
 #include <p101_posix/p101_unistd.h>
@@ -35,6 +36,7 @@ struct event_counts
     int opens;
     int closes;
     int allocations;
+    int frees;
 };
 
 struct fault_state
@@ -100,6 +102,10 @@ static void observe_allocations(const struct p101_env *env, p101_env_alloc_event
     if(event == P101_ENV_ALLOC_ALLOC)
     {
         counts->allocations++;
+    }
+    else if(event == P101_ENV_ALLOC_FREE)
+    {
+        counts->frees++;
     }
 }
 
@@ -194,6 +200,19 @@ static void test_resource_events(struct p101_env *env, struct p101_error *err)
         EXPECT(counts.closes == 1);
     }
     p101_env_set_fd_observer(env, NULL, NULL);
+}
+
+static void test_regex_error_message_cleanup(struct p101_env *env, struct p101_error *err)
+{
+    struct event_counts counts = {0};
+    regex_t             expression;
+
+    p101_env_set_alloc_observer(env, observe_allocations, &counts);
+    P101_ERROR_RAISE_ERRNO(err, EBUSY);
+    EXPECT(p101_regcomp(env, err, &expression, "[", REG_EXTENDED) != 0);
+    EXPECT(counts.allocations == counts.frees);
+    p101_error_reset(err);
+    p101_env_set_alloc_observer(env, NULL, NULL);
 }
 
 static void test_expected_statuses(struct p101_env *env, struct p101_error *err)
@@ -291,6 +310,7 @@ int main(void)
     p101_env_set_alloc_observer(env, NULL, NULL);
     test_eof_is_not_an_error(env, err);
     test_resource_events(env, err);
+    test_regex_error_message_cleanup(env, err);
     test_expected_statuses(env, err);
     test_faults_and_balanced_trace(env, err);
     test_short_read_fault(err);
