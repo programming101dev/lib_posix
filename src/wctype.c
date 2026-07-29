@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_wctype.h"
+#include "p101_posix_internal.h"
 
 int p101_iswalnum_l(const struct p101_env *env, wint_t wc, locale_t locale)
 {
@@ -24,6 +25,7 @@ int p101_iswalnum_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswalnum_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -35,6 +37,7 @@ int p101_iswalpha_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswalpha_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -46,6 +49,7 @@ int p101_iswblank_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswblank_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -57,6 +61,7 @@ int p101_iswcntrl_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswcntrl_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -68,6 +73,7 @@ int p101_iswctype_l(const struct p101_env *env, wint_t wc, wctype_t charclass, l
     errno   = 0;
     ret_val = iswctype_l(wc, charclass, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -79,6 +85,7 @@ int p101_iswdigit_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswdigit_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -90,6 +97,7 @@ int p101_iswgraph_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswgraph_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -101,6 +109,7 @@ int p101_iswlower_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswlower_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -112,6 +121,7 @@ int p101_iswprint_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswprint_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -123,6 +133,7 @@ int p101_iswpunct_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswpunct_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -134,6 +145,7 @@ int p101_iswspace_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswspace_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -145,6 +157,7 @@ int p101_iswupper_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswupper_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -156,6 +169,7 @@ int p101_iswxdigit_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = iswxdigit_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -167,6 +181,7 @@ wint_t p101_towctrans_l(const struct p101_env *env, wint_t wc, wctrans_t desc, l
     errno   = 0;
     ret_val = towctrans_l(wc, desc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -178,6 +193,7 @@ wint_t p101_towlower_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = towlower_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -189,6 +205,7 @@ wint_t p101_towupper_l(const struct p101_env *env, wint_t wc, locale_t locale)
     errno   = 0;
     ret_val = towupper_l(wc, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -197,24 +214,33 @@ wctrans_t p101_wctrans_l(const struct p101_env *env, struct p101_error *err, con
     wctrans_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = wctrans_l(charclass, locale);
 
-    if(errno != 0)
+    if(!ret_val)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, errno == 0 ? EINVAL : errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
-wctype_t p101_wctype_l(const struct p101_env *env, const char *property, locale_t locale)
+wctype_t p101_wctype_l(const struct p101_env *env, struct p101_error *err, const char *property, locale_t locale)
 {
     wctype_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = wctype_l(property, locale);
 
+    if(!ret_val)
+    {
+        P101_ERROR_RAISE_ERRNO(err, errno == 0 ? EINVAL : errno);
+    }
+
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

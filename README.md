@@ -71,7 +71,63 @@ This compiles through the strict analysis pipeline: the clang-format check, clan
 ## **Testing**
 
 `./check.sh` is the one command to run before you submit: the format check, the strict build, the tests, and a short fuzz smoke run, with a single PASS/FAIL at the end.
-This library does not have a `test/` tree yet, so `./test.sh` reports that and exits; the rest of the gate still runs.
+The repository has contract tests for error sentinels, resource events, fault
+injection, balanced call tracing, and C/C++ public-header compatibility:
+
+```bash
+./test.sh
+```
+
+When a libFuzzer-capable Clang is installed, the bounded smoke harness exercises
+regular expressions, filename matching, word expansion with command execution
+disabled, address parsing, and multibyte conversion:
+
+```bash
+./fuzz.sh -t 30
+```
+
+These are executable regression checks, not proof of correctness. Fuzzing only
+covers inputs reached during its time budget.
+
+## Wrapper contract
+
+Every wrapper emits a call-entry and call-exit event through `p101_env`.
+Wrappers that accept `struct p101_error *` also honor the environment's fault
+injector while preserving the native interface's return convention. Native
+statuses that describe an expected outcome—such as end-of-file, `EBUSY` from a
+try-lock, `ETIMEDOUT`, or `EAGAIN` from `sem_trywait`—are returned without
+inventing an application error.
+
+The generic wrapper trace records the function name and source location, not
+typed argument or result values. Code that has a safe, useful textual
+representation for those values can opt into payload logging with
+`P101_CALL_ENTER` and `P101_CALL_EXIT`; strings, buffers, credentials, and
+opaque handles are deliberately not formatted automatically.
+
+Descriptor-producing wrappers emit open/close events where the underlying
+descriptor is observable. Allocation-producing interfaces such as `wcsdup`,
+`getline`, `getdelim`, and `scandir` emit allocation events. The observations
+are limited to calls routed through `p101_*`; direct libc calls and work done
+inside third-party libraries are not visible. The current resource schema
+models descriptors and heap allocations. Opaque POSIX lifetimes such as locale,
+catalog, iconv, dynamic-loader, regular-expression, and word-expansion handles
+still appear in the call trace, but are not classified as leak-checkable
+resources.
+
+`sigsetjmp` is intentionally not wrapped. It must execute directly in the stack
+frame that will receive the corresponding `siglongjmp`; a normal function
+wrapper cannot preserve that contract. Call `sigsetjmp` directly and use
+`p101_siglongjmp` for the jump.
+
+## Deliberately omitted interfaces
+
+The public headers contain only APIs implemented on every supported platform:
+macOS, Linux, and FreeBSD. Platform-specific or unsafe/obsolete interfaces are
+omitted rather than left as commented declarations. Notable omissions include
+the legacy non-reentrant password/group/network database lookups,
+`readdir_r`, `ctermid`, unnamed POSIX semaphore operations that macOS
+deprecates, POSIX timers absent from macOS, and locale-specific wide-string
+comparisons absent from FreeBSD.
 
 ## **Installing**
 

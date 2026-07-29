@@ -26,7 +26,8 @@ extern "C"
 #endif
 
     int     p101_aio_cancel(const struct p101_env *env, struct p101_error *err, int fildes, struct aiocb *aiocbp);
-    int     p101_aio_error(const struct p101_env *env, struct p101_error *err, const struct aiocb *aiocbp);
+    int     p101_aio_error(const struct p101_env *env, const struct aiocb *aiocbp);
+    int     p101_aio_fsync(const struct p101_env *env, struct p101_error *err, int op, struct aiocb *aiocbp);
     int     p101_aio_read(const struct p101_env *env, struct p101_error *err, struct aiocb *aiocbp);
     ssize_t p101_aio_return(const struct p101_env *env, struct p101_error *err, struct aiocb *aiocbp);
     int     p101_aio_suspend(const struct p101_env *env, struct p101_error *err, const struct aiocb *const list[], int nent, const struct timespec *timeout);

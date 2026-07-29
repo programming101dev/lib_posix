@@ -15,13 +15,15 @@
  */
 
 #include "p101_posix/p101_regex.h"
-#include <p101_c/p101_stdlib.h>
+#include "p101_posix_internal.h"
+#include <stdlib.h>
 
 int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *restrict preg, const char *restrict pattern, int cflags)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, REG_ESPACE);
     errno   = 0;
     ret_val = regcomp(preg, pattern, cflags);
 
@@ -30,17 +32,22 @@ int p101_regcomp(const struct p101_env *env, struct p101_error *err, regex_t *re
         size_t len;
         char  *msg;
 
-        len = p101_regerror(env, ret_val, preg, NULL, 0);
-        msg = (char *)p101_malloc(env, err, len);
+        len = regerror(ret_val, preg, NULL, 0);
+        msg = (char *)malloc(len);
 
-        if(p101_error_has_no_error(err))
+        if(msg == NULL)
         {
-            (void)p101_regerror(env, ret_val, preg, msg, len);
+            P101_ERROR_RAISE_ERRNO(err, ENOMEM);
+        }
+        else
+        {
+            (void)regerror(ret_val, preg, msg, len);
             P101_ERROR_RAISE_SYSTEM(err, msg, ret_val);
-            p101_free(env, msg);
+            free(msg);
         }
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -52,6 +59,7 @@ size_t p101_regerror(const struct p101_env *env, int errcode, const regex_t *res
     errno   = 0;
     ret_val = regerror(errcode, preg, errbuf, errbuf_size);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -63,6 +71,7 @@ int p101_regexec(const struct p101_env *env, const regex_t *restrict preg, const
     errno   = 0;
     ret_val = regexec(preg, string, nmatch, pmatch, eflags);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -71,4 +80,5 @@ void p101_regfree(const struct p101_env *env, regex_t *preg)
     P101_TRACE(env);
     errno = 0;
     regfree(preg);
+    P101_TRACE_EXIT(env);
 }

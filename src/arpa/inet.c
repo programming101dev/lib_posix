@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/arpa/p101_inet.h"
 #include <ctype.h>
 #include <limits.h>
@@ -114,6 +115,7 @@ uint32_t p101_htonl(const struct p101_env *env, uint32_t hostlong)
     errno   = 0;
     ret_val = htonl(hostlong);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -125,6 +127,7 @@ uint16_t p101_htons(const struct p101_env *env, uint16_t hostshort)
     errno   = 0;
     ret_val = htons(hostshort);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -136,6 +139,7 @@ uint32_t p101_ntohl(const struct p101_env *env, uint32_t netlong)
     errno   = 0;
     ret_val = ntohl(netlong);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -147,6 +151,7 @@ uint16_t p101_ntohs(const struct p101_env *env, uint16_t netshort)
     errno   = 0;
     ret_val = ntohs(netshort);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -155,6 +160,7 @@ in_addr_t p101_inet_addr(const struct p101_env *env, struct p101_error *err, con
     in_addr_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, INADDR_NONE);
     errno   = 0;
     ret_val = inet_addr(cp);
 
@@ -163,6 +169,7 @@ in_addr_t p101_inet_addr(const struct p101_env *env, struct p101_error *err, con
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -174,6 +181,7 @@ char *p101_inet_ntoa(const struct p101_env *env, struct in_addr in)
     errno   = 0;
     ret_val = inet_ntoa(in);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -182,6 +190,7 @@ const char *p101_inet_ntop(const struct p101_env *env, struct p101_error *err, i
     const char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = inet_ntop(af, src, dst, size);
 
@@ -190,6 +199,7 @@ const char *p101_inet_ntop(const struct p101_env *env, struct p101_error *err, i
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -198,6 +208,7 @@ int p101_inet_pton(const struct p101_env *env, struct p101_error *err, int af, c
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = inet_pton(af, src, dst);
 
@@ -213,5 +224,6 @@ int p101_inet_pton(const struct p101_env *env, struct p101_error *err, int af, c
         }
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

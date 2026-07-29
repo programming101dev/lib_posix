@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_pthread.h"
+#include "p101_posix_internal.h"
 
 /* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void))
@@ -22,6 +23,7 @@ int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_atfork(prepare, parent, child);
 
@@ -30,6 +32,7 @@ int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -38,6 +41,7 @@ int p101_pthread_attr_destroy(const struct p101_env *env, struct p101_error *err
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_destroy(attr);
 
@@ -46,6 +50,7 @@ int p101_pthread_attr_destroy(const struct p101_env *env, struct p101_error *err
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -54,6 +59,7 @@ int p101_pthread_attr_getdetachstate(const struct p101_env *env, struct p101_err
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_getdetachstate(attr, detachstate);
 
@@ -62,6 +68,7 @@ int p101_pthread_attr_getdetachstate(const struct p101_env *env, struct p101_err
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -70,6 +77,7 @@ int p101_pthread_attr_getguardsize(const struct p101_env *env, struct p101_error
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_getguardsize(attr, guardsize);
 
@@ -78,6 +86,7 @@ int p101_pthread_attr_getguardsize(const struct p101_env *env, struct p101_error
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -86,6 +95,7 @@ int p101_pthread_attr_getschedparam(const struct p101_env *env, struct p101_erro
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_getschedparam(attr, param);
 
@@ -94,6 +104,7 @@ int p101_pthread_attr_getschedparam(const struct p101_env *env, struct p101_erro
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -102,6 +113,7 @@ int p101_pthread_attr_init(const struct p101_env *env, struct p101_error *err, p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_init(attr);
 
@@ -110,6 +122,7 @@ int p101_pthread_attr_init(const struct p101_env *env, struct p101_error *err, p
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -118,6 +131,7 @@ int p101_pthread_attr_setdetachstate(const struct p101_env *env, struct p101_err
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_setdetachstate(attr, detachstate);
 
@@ -126,36 +140,25 @@ int p101_pthread_attr_setdetachstate(const struct p101_env *env, struct p101_err
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
-int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error *err, const pthread_attr_t *restrict attr, size_t guardsize)
+int p101_pthread_attr_setguardsize(const struct p101_env *env, struct p101_error *err, pthread_attr_t *attr, size_t guardsize)
 {
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
-#endif
-#ifdef __clang__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
-#endif
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
+    errno   = 0;
     ret_val = pthread_attr_setguardsize(attr, guardsize);
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC diagnostic pop
-#endif
-#ifdef __clang__
-    #pragma clang diagnostic pop
-#endif
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -164,6 +167,7 @@ int p101_pthread_attr_setschedparam(const struct p101_env *env, struct p101_erro
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_attr_setschedparam(attr, param);
 
@@ -172,6 +176,7 @@ int p101_pthread_attr_setschedparam(const struct p101_env *env, struct p101_erro
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -180,6 +185,7 @@ int p101_pthread_cancel(const struct p101_env *env, struct p101_error *err, pthr
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cancel(thread);
 
@@ -188,6 +194,7 @@ int p101_pthread_cancel(const struct p101_env *env, struct p101_error *err, pthr
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -196,6 +203,7 @@ int p101_pthread_cond_broadcast(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_broadcast(cond);
 
@@ -204,6 +212,7 @@ int p101_pthread_cond_broadcast(const struct p101_env *env, struct p101_error *e
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -212,6 +221,7 @@ int p101_pthread_cond_destroy(const struct p101_env *env, struct p101_error *err
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_destroy(cond);
 
@@ -220,6 +230,7 @@ int p101_pthread_cond_destroy(const struct p101_env *env, struct p101_error *err
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -228,6 +239,7 @@ int p101_pthread_cond_init(const struct p101_env *env, struct p101_error *err, p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_init(cond, attr);
 
@@ -236,6 +248,7 @@ int p101_pthread_cond_init(const struct p101_env *env, struct p101_error *err, p
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -244,6 +257,7 @@ int p101_pthread_cond_signal(const struct p101_env *env, struct p101_error *err,
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_signal(cond);
 
@@ -252,6 +266,7 @@ int p101_pthread_cond_signal(const struct p101_env *env, struct p101_error *err,
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -260,14 +275,16 @@ int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_timedwait(cond, mutex, abstime);
 
-    if(ret_val != 0)
+    if(ret_val != 0 && ret_val != ETIMEDOUT)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -276,6 +293,7 @@ int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_cond_wait(cond, mutex);
 
@@ -284,6 +302,7 @@ int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, p
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -292,6 +311,7 @@ int p101_pthread_condattr_destroy(const struct p101_env *env, struct p101_error 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_condattr_destroy(attr);
 
@@ -300,6 +320,7 @@ int p101_pthread_condattr_destroy(const struct p101_env *env, struct p101_error 
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -308,6 +329,7 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_condattr_init(attr);
 
@@ -316,6 +338,7 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -325,6 +348,7 @@ int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthr
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_create(thread, attr, start_routine, arg);
 
@@ -333,6 +357,7 @@ int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthr
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -341,6 +366,7 @@ int p101_pthread_detach(const struct p101_env *env, struct p101_error *err, pthr
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_detach(thread);
 
@@ -349,6 +375,7 @@ int p101_pthread_detach(const struct p101_env *env, struct p101_error *err, pthr
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -360,6 +387,7 @@ int p101_pthread_equal(const struct p101_env *env, pthread_t t1, pthread_t t2)
     errno   = 0;
     ret_val = pthread_equal(t1, t2);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -367,6 +395,7 @@ void p101_pthread_exit(const struct p101_env *env, void *value_ptr)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_TRACE_EXIT(env);
     pthread_exit(value_ptr);
 }
 
@@ -378,6 +407,7 @@ void *p101_pthread_getspecific(const struct p101_env *env, pthread_key_t key)
     errno   = 0;
     ret_val = pthread_getspecific(key);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -386,6 +416,7 @@ int p101_pthread_join(const struct p101_env *env, struct p101_error *err, pthrea
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_join(thread, value_ptr);
 
@@ -394,6 +425,7 @@ int p101_pthread_join(const struct p101_env *env, struct p101_error *err, pthrea
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -402,6 +434,7 @@ int p101_pthread_key_create(const struct p101_env *env, struct p101_error *err, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_key_create(key, destructor);
 
@@ -410,6 +443,7 @@ int p101_pthread_key_create(const struct p101_env *env, struct p101_error *err, 
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -418,6 +452,7 @@ int p101_pthread_key_delete(const struct p101_env *env, struct p101_error *err, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_key_delete(key);
 
@@ -426,6 +461,7 @@ int p101_pthread_key_delete(const struct p101_env *env, struct p101_error *err, 
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -434,6 +470,7 @@ int p101_pthread_mutex_destroy(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutex_destroy(mutex);
 
@@ -442,6 +479,7 @@ int p101_pthread_mutex_destroy(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -450,6 +488,7 @@ int p101_pthread_mutex_init(const struct p101_env *env, struct p101_error *err, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutex_init(mutex, attr);
 
@@ -458,6 +497,7 @@ int p101_pthread_mutex_init(const struct p101_env *env, struct p101_error *err, 
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -466,6 +506,7 @@ int p101_pthread_mutex_lock(const struct p101_env *env, struct p101_error *err, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutex_lock(mutex);
 
@@ -474,6 +515,7 @@ int p101_pthread_mutex_lock(const struct p101_env *env, struct p101_error *err, 
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -482,14 +524,16 @@ int p101_pthread_mutex_trylock(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutex_trylock(mutex);
 
-    if(ret_val != 0)
+    if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -498,6 +542,7 @@ int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutex_unlock(mutex);
 
@@ -506,6 +551,7 @@ int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -514,6 +560,7 @@ int p101_pthread_mutexattr_destroy(const struct p101_env *env, struct p101_error
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutexattr_destroy(attr);
 
@@ -522,6 +569,7 @@ int p101_pthread_mutexattr_destroy(const struct p101_env *env, struct p101_error
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -530,6 +578,7 @@ int p101_pthread_mutexattr_gettype(const struct p101_env *env, struct p101_error
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutexattr_gettype(attr, type);
 
@@ -538,6 +587,7 @@ int p101_pthread_mutexattr_gettype(const struct p101_env *env, struct p101_error
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -546,6 +596,7 @@ int p101_pthread_mutexattr_init(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutexattr_init(attr);
 
@@ -554,6 +605,7 @@ int p101_pthread_mutexattr_init(const struct p101_env *env, struct p101_error *e
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -562,6 +614,7 @@ int p101_pthread_mutexattr_settype(const struct p101_env *env, struct p101_error
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_mutexattr_settype(attr, type);
 
@@ -570,6 +623,7 @@ int p101_pthread_mutexattr_settype(const struct p101_env *env, struct p101_error
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -578,6 +632,7 @@ int p101_pthread_once(const struct p101_env *env, struct p101_error *err, pthrea
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_once(once_control, init_routine);
 
@@ -586,6 +641,7 @@ int p101_pthread_once(const struct p101_env *env, struct p101_error *err, pthrea
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -594,6 +650,7 @@ int p101_pthread_rwlock_destroy(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_destroy(rwlock);
 
@@ -602,6 +659,7 @@ int p101_pthread_rwlock_destroy(const struct p101_env *env, struct p101_error *e
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -610,6 +668,7 @@ int p101_pthread_rwlock_init(const struct p101_env *env, struct p101_error *err,
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_init(rwlock, attr);
 
@@ -618,6 +677,7 @@ int p101_pthread_rwlock_init(const struct p101_env *env, struct p101_error *err,
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -626,6 +686,7 @@ int p101_pthread_rwlock_rdlock(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_rdlock(rwlock);
 
@@ -634,6 +695,7 @@ int p101_pthread_rwlock_rdlock(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -642,14 +704,16 @@ int p101_pthread_rwlock_tryrdlock(const struct p101_env *env, struct p101_error 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_tryrdlock(rwlock);
 
-    if(ret_val != 0)
+    if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -658,14 +722,16 @@ int p101_pthread_rwlock_trywrlock(const struct p101_env *env, struct p101_error 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_trywrlock(rwlock);
 
-    if(ret_val != 0)
+    if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -674,6 +740,7 @@ int p101_pthread_rwlock_unlock(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_unlock(rwlock);
 
@@ -682,6 +749,7 @@ int p101_pthread_rwlock_unlock(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -690,6 +758,7 @@ int p101_pthread_rwlock_wrlock(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlock_wrlock(rwlock);
 
@@ -698,6 +767,7 @@ int p101_pthread_rwlock_wrlock(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -706,6 +776,7 @@ int p101_pthread_rwlockattr_destroy(const struct p101_env *env, struct p101_erro
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlockattr_destroy(attr);
 
@@ -714,6 +785,7 @@ int p101_pthread_rwlockattr_destroy(const struct p101_env *env, struct p101_erro
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -722,6 +794,7 @@ int p101_pthread_rwlockattr_init(const struct p101_env *env, struct p101_error *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_rwlockattr_init(attr);
 
@@ -730,6 +803,7 @@ int p101_pthread_rwlockattr_init(const struct p101_env *env, struct p101_error *
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -741,6 +815,7 @@ pthread_t p101_pthread_self(const struct p101_env *env)
     errno   = 0;
     ret_val = pthread_self();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -749,6 +824,7 @@ int p101_pthread_setcancelstate(const struct p101_env *env, struct p101_error *e
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_setcancelstate(state, oldstate);
 
@@ -757,6 +833,7 @@ int p101_pthread_setcancelstate(const struct p101_env *env, struct p101_error *e
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -765,6 +842,7 @@ int p101_pthread_setcanceltype(const struct p101_env *env, struct p101_error *er
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_setcanceltype(type, oldtype);
 
@@ -773,6 +851,7 @@ int p101_pthread_setcanceltype(const struct p101_env *env, struct p101_error *er
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -781,6 +860,7 @@ int p101_pthread_setspecific(const struct p101_env *env, struct p101_error *err,
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = pthread_setspecific(key, value);
 
@@ -789,6 +869,7 @@ int p101_pthread_setspecific(const struct p101_env *env, struct p101_error *err,
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -797,4 +878,5 @@ void p101_pthread_testcancel(const struct p101_env *env)
     P101_TRACE(env);
     errno = 0;
     pthread_testcancel();
+    P101_TRACE_EXIT(env);
 }

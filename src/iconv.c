@@ -15,12 +15,14 @@
  */
 
 #include "p101_posix/p101_iconv.h"
+#include "p101_posix_internal.h"
 
 size_t p101_iconv(const struct p101_env *env, struct p101_error *err, iconv_t cd, char **restrict inbuf, size_t *restrict inbytesleft, char **restrict outbuf, size_t *restrict outbytesleft)
 {
     size_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (size_t)-1);
     errno   = 0;
     ret_val = iconv(cd, inbuf, inbytesleft, outbuf, outbytesleft);
 
@@ -29,6 +31,7 @@ size_t p101_iconv(const struct p101_env *env, struct p101_error *err, iconv_t cd
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +40,7 @@ int p101_iconv_close(const struct p101_env *env, struct p101_error *err, iconv_t
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = iconv_close(cd);
 
@@ -45,6 +49,7 @@ int p101_iconv_close(const struct p101_env *env, struct p101_error *err, iconv_t
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -53,6 +58,7 @@ iconv_t p101_iconv_open(const struct p101_env *env, struct p101_error *err, cons
     iconv_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (iconv_t)-1);    // NOLINT(performance-no-int-to-ptr)
     errno   = 0;
     ret_val = iconv_open(tocode, fromcode);
 
@@ -61,5 +67,6 @@ iconv_t p101_iconv_open(const struct p101_env *env, struct p101_error *err, cons
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

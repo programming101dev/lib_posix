@@ -15,13 +15,14 @@
  */
 
 #include "p101_posix/p101_stdlib.h"
+#include "p101_posix_internal.h"
 #include <stdlib.h>
 
 #ifdef __APPLE__
     #include <unistd.h>
 #endif
 
-int p101_getsubopt(const struct p101_env *env, struct p101_error *err, char **optionp, char *const *keylistp, char **valuep)
+int p101_getsubopt(const struct p101_env *env, char **optionp, char *const *keylistp, char **valuep)
 {
     int ret_val;
 
@@ -29,11 +30,7 @@ int p101_getsubopt(const struct p101_env *env, struct p101_error *err, char **op
     errno   = 0;
     ret_val = getsubopt(optionp, keylistp, valuep);
 
-    if(ret_val == -1)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -42,6 +39,7 @@ char *p101_mkdtemp(const struct p101_env *env, struct p101_error *err, char *nam
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = mkdtemp(name_template);
 
@@ -50,6 +48,7 @@ char *p101_mkdtemp(const struct p101_env *env, struct p101_error *err, char *nam
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -91,6 +90,7 @@ int p101_setenv(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setenv(envname, envval, overwrite);
 
@@ -99,6 +99,7 @@ int p101_setenv(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -107,6 +108,7 @@ int p101_unsetenv(const struct p101_env *env, struct p101_error *err, const char
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = unsetenv(name);
 
@@ -115,5 +117,6 @@ int p101_unsetenv(const struct p101_env *env, struct p101_error *err, const char
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

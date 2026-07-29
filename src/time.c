@@ -15,12 +15,14 @@
  */
 
 #include "p101_posix/p101_time.h"
+#include "p101_posix_internal.h"
 
 int p101_clock_getres(const struct p101_env *env, struct p101_error *err, clockid_t clock_id, struct timespec *res)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = clock_getres(clock_id, res);
 
@@ -29,6 +31,7 @@ int p101_clock_getres(const struct p101_env *env, struct p101_error *err, clocki
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +40,7 @@ int p101_clock_gettime(const struct p101_env *env, struct p101_error *err, clock
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = clock_gettime(clock_id, tp);
 
@@ -45,6 +49,7 @@ int p101_clock_gettime(const struct p101_env *env, struct p101_error *err, clock
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -53,6 +58,7 @@ int p101_clock_settime(const struct p101_env *env, struct p101_error *err, clock
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = clock_settime(clock_id, tp);
 
@@ -61,6 +67,7 @@ int p101_clock_settime(const struct p101_env *env, struct p101_error *err, clock
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -69,6 +76,7 @@ struct tm *p101_gmtime_r(const struct p101_env *env, struct p101_error *err, con
     struct tm *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = gmtime_r(timer, result);
 
@@ -77,6 +85,7 @@ struct tm *p101_gmtime_r(const struct p101_env *env, struct p101_error *err, con
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -85,6 +94,7 @@ struct tm *p101_localtime_r(const struct p101_env *env, struct p101_error *err, 
     struct tm *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = localtime_r(timer, result);
 
@@ -93,6 +103,7 @@ struct tm *p101_localtime_r(const struct p101_env *env, struct p101_error *err, 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -101,6 +112,7 @@ int p101_nanosleep(const struct p101_env *env, struct p101_error *err, const str
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = nanosleep(rqtp, rmtp);
 
@@ -109,6 +121,7 @@ int p101_nanosleep(const struct p101_env *env, struct p101_error *err, const str
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -127,6 +140,7 @@ size_t p101_strftime_l(const struct p101_env *env, char *restrict s, size_t maxs
     #pragma GCC diagnostic pop
 #endif
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -135,4 +149,5 @@ void p101_tzset(const struct p101_env *env)
     P101_TRACE(env);
     errno = 0;
     tzset();
+    P101_TRACE_EXIT(env);
 }

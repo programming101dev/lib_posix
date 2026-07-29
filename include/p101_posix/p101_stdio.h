@@ -65,7 +65,4 @@ extern "C"
 }
 #endif
 
-// unsafe
-// char   *p101_ctermid(const struct p101_env *env, char *s); - use ttyname_r instead
-
 #endif    // LIBP101_POSIX_P101_STDIO_H

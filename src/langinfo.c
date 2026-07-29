@@ -24,6 +24,7 @@ char *p101_nl_langinfo(const struct p101_env *env, nl_item item)
     errno   = 0;
     ret_val = nl_langinfo(item);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -35,5 +36,6 @@ char *p101_nl_langinfo_l(const struct p101_env *env, nl_item item, locale_t loca
     errno   = 0;
     ret_val = nl_langinfo_l(item, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

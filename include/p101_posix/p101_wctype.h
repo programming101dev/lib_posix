@@ -46,7 +46,7 @@ extern "C"
     wint_t    p101_towlower_l(const struct p101_env *env, wint_t wc, locale_t locale);
     wint_t    p101_towupper_l(const struct p101_env *env, wint_t wc, locale_t locale);
     wctrans_t p101_wctrans_l(const struct p101_env *env, struct p101_error *err, const char *charclass, locale_t locale);
-    wctype_t  p101_wctype_l(const struct p101_env *env, const char *property, locale_t locale);
+    wctype_t  p101_wctype_l(const struct p101_env *env, struct p101_error *err, const char *property, locale_t locale);
 
 #ifdef __cplusplus
 }

@@ -44,12 +44,4 @@ extern "C"
 }
 #endif
 
-// not on macOS
-// int p101_sem_timedwait(const struct p101_env *env, struct p101_error *err, sem_t *restrict sem, const struct timespec *restrict abstime);
-
-// deprecated on macOS
-// int p101_sem_destroy(const struct p101_env *env, struct p101_error *err, sem_t *sem);
-// int p101_sem_getvalue(const struct p101_env *env, struct p101_error *err, sem_t *restrict sem, int *restrict sval);
-// int p101_sem_init(const struct p101_env *env, struct p101_error *err, sem_t *sem, int pshared, unsigned value);
-
-#endif    // LIBP101_POSIX_P101_SEMAPHPORE_H
+#endif    // LIBP101_POSIX_P101_SEMAPHORE_H

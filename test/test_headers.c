@@ -1,0 +1,46 @@
+#include <p101_posix/arpa/p101_inet.h>
+#include <p101_posix/net/p101_if.h>
+#include <p101_posix/p101_aio.h>
+#include <p101_posix/p101_ctype.h>
+#include <p101_posix/p101_dirent.h>
+#include <p101_posix/p101_dlfcn.h>
+#include <p101_posix/p101_fcntl.h>
+#include <p101_posix/p101_fnmatch.h>
+#include <p101_posix/p101_glob.h>
+#include <p101_posix/p101_grp.h>
+#include <p101_posix/p101_iconv.h>
+#include <p101_posix/p101_langinfo.h>
+#include <p101_posix/p101_locale.h>
+#include <p101_posix/p101_netdb.h>
+#include <p101_posix/p101_nl_types.h>
+#include <p101_posix/p101_poll.h>
+#include <p101_posix/p101_pthread.h>
+#include <p101_posix/p101_pwd.h>
+#include <p101_posix/p101_regex.h>
+#include <p101_posix/p101_sched.h>
+#include <p101_posix/p101_semaphore.h>
+#include <p101_posix/p101_setjmp.h>
+#include <p101_posix/p101_signal.h>
+#include <p101_posix/p101_stdio.h>
+#include <p101_posix/p101_stdlib.h>
+#include <p101_posix/p101_string.h>
+#include <p101_posix/p101_strings.h>
+#include <p101_posix/p101_termios.h>
+#include <p101_posix/p101_time.h>
+#include <p101_posix/p101_unistd.h>
+#include <p101_posix/p101_wchar.h>
+#include <p101_posix/p101_wctype.h>
+#include <p101_posix/p101_wordexp.h>
+#include <p101_posix/sys/p101_mman.h>
+#include <p101_posix/sys/p101_select.h>
+#include <p101_posix/sys/p101_socket.h>
+#include <p101_posix/sys/p101_stat.h>
+#include <p101_posix/sys/p101_statvfs.h>
+#include <p101_posix/sys/p101_times.h>
+#include <p101_posix/sys/p101_utsname.h>
+#include <p101_posix/sys/p101_wait.h>
+
+int main(void)
+{
+    return 0;
+}

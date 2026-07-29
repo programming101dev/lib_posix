@@ -15,12 +15,28 @@
  */
 
 #include "p101_posix/p101_nl_types.h"
+#include "p101_posix_internal.h"
+#include <string.h>
+
+static char *mutable_fallback(const char *fallback)
+{
+    char *result;
+
+    /*
+     * POSIX gives catgets() a const fallback argument but a mutable return
+     * type. Copying the pointer representation preserves that native contract
+     * without a cast that discards const.
+     */
+    memcpy((void *)&result, (const void *)&fallback, sizeof(result));
+    return result;
+}
 
 int p101_catclose(const struct p101_env *env, struct p101_error *err, nl_catd catd)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = catclose(catd);
 
@@ -29,6 +45,7 @@ int p101_catclose(const struct p101_env *env, struct p101_error *err, nl_catd ca
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +54,7 @@ char *p101_catgets(const struct p101_env *env, struct p101_error *err, nl_catd c
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, mutable_fallback(s));
     errno   = 0;
     ret_val = catgets(catd, set_id, msg_id, s);
 
@@ -45,6 +63,7 @@ char *p101_catgets(const struct p101_env *env, struct p101_error *err, nl_catd c
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -53,6 +72,7 @@ nl_catd p101_catopen(const struct p101_env *env, struct p101_error *err, const c
     nl_catd ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (nl_catd)-1);    // NOLINT(performance-no-int-to-ptr)
     errno   = 0;
     ret_val = catopen(name, oflag);
 
@@ -61,5 +81,6 @@ nl_catd p101_catopen(const struct p101_env *env, struct p101_error *err, const c
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

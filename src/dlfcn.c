@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_dlfcn.h"
+#include "p101_posix_internal.h"
 #include <dlfcn.h>
 
 static int dl_error_code(void);
@@ -38,6 +39,7 @@ int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handl
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = dlclose(handle);
 
@@ -47,10 +49,11 @@ int p101_dlclose(const struct p101_env *env, struct p101_error *err, void *handl
         int         err_code;
 
         err_code = dl_error_code();
-        str      = p101_dlerror(env);
+        str      = dlerror();
         P101_ERROR_RAISE_SYSTEM(err, str, err_code);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -62,6 +65,7 @@ char *p101_dlerror(const struct p101_env *env)
     errno   = 0;
     ret_val = dlerror();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -70,6 +74,7 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
     void *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = dlopen(file, mode);
 
@@ -79,10 +84,11 @@ void *p101_dlopen(const struct p101_env *env, struct p101_error *err, const char
         int         err_code;
 
         err_code = dl_error_code();
-        str      = p101_dlerror(env);
+        str      = dlerror();
         P101_ERROR_RAISE_SYSTEM(err, str, err_code);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -93,6 +99,7 @@ void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restr
     void       *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno = 0;
     (void)dlerror();
     ret_val  = dlsym(handle, name);
@@ -104,5 +111,6 @@ void *p101_dlsym(const struct p101_env *env, struct p101_error *err, void *restr
         P101_ERROR_RAISE_SYSTEM(err, msg, err_code);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

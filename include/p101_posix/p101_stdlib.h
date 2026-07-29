@@ -24,7 +24,7 @@ extern "C"
 {
 #endif
 
-    int   p101_getsubopt(const struct p101_env *env, struct p101_error *err, char **optionp, char *const *keylistp, char **valuep);
+    int   p101_getsubopt(const struct p101_env *env, char **optionp, char *const *keylistp, char **valuep);
     char *p101_mkdtemp(const struct p101_env *env, struct p101_error *err, char *name_template);
     int   p101_mkstemp(const struct p101_env *env, struct p101_error *err, char *name_template);
     int   p101_setenv(const struct p101_env *env, struct p101_error *err, const char *envname, const char *envval, int overwrite);

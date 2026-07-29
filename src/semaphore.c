@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_semaphore.h"
+#include "p101_posix_internal.h"
 #include <fcntl.h>
 #include <stdarg.h>
 
@@ -48,6 +49,7 @@ int p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *se
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sem_close(sem);
 
@@ -56,6 +58,7 @@ int p101_sem_close(const struct p101_env *env, struct p101_error *err, sem_t *se
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -65,6 +68,7 @@ sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const c
     va_list args;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, SEM_FAILED);
     errno = 0;
 
     if(sem_open_uses_create_args(oflag))
@@ -89,6 +93,7 @@ sem_t *p101_sem_open(const struct p101_env *env, struct p101_error *err, const c
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -97,6 +102,7 @@ int p101_sem_post(const struct p101_env *env, struct p101_error *err, sem_t *sem
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sem_post(sem);
 
@@ -105,6 +111,7 @@ int p101_sem_post(const struct p101_env *env, struct p101_error *err, sem_t *sem
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -113,14 +120,16 @@ int p101_sem_trywait(const struct p101_env *env, struct p101_error *err, sem_t *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sem_trywait(sem);
 
-    if(ret_val == -1)
+    if(ret_val == -1 && errno != EAGAIN)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -129,6 +138,7 @@ int p101_sem_unlink(const struct p101_env *env, struct p101_error *err, const ch
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sem_unlink(name);
 
@@ -137,6 +147,7 @@ int p101_sem_unlink(const struct p101_env *env, struct p101_error *err, const ch
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -145,6 +156,7 @@ int p101_sem_wait(const struct p101_env *env, struct p101_error *err, sem_t *sem
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sem_wait(sem);
 
@@ -153,5 +165,6 @@ int p101_sem_wait(const struct p101_env *env, struct p101_error *err, sem_t *sem
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

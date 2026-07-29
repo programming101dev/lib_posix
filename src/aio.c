@@ -15,12 +15,14 @@
  */
 
 #include "p101_posix/p101_aio.h"
+#include "p101_posix_internal.h"
 
 int p101_aio_cancel(const struct p101_env *env, struct p101_error *err, int fildes, struct aiocb *aiocbp)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = aio_cancel(fildes, aiocbp);
 
@@ -29,10 +31,11 @@ int p101_aio_cancel(const struct p101_env *env, struct p101_error *err, int fild
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
-int p101_aio_error(const struct p101_env *env, struct p101_error *err, const struct aiocb *aiocbp)
+int p101_aio_error(const struct p101_env *env, const struct aiocb *aiocbp)
 {
     int ret_val;
 
@@ -40,11 +43,25 @@ int p101_aio_error(const struct p101_env *env, struct p101_error *err, const str
     errno   = 0;
     ret_val = aio_error(aiocbp);
 
+    P101_TRACE_EXIT(env);
+    return ret_val;
+}
+
+int p101_aio_fsync(const struct p101_env *env, struct p101_error *err, int op, struct aiocb *aiocbp)
+{
+    int ret_val;
+
+    P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
+    errno   = 0;
+    ret_val = aio_fsync(op, aiocbp);
+
     if(ret_val == -1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -53,6 +70,7 @@ int p101_aio_read(const struct p101_env *env, struct p101_error *err, struct aio
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = aio_read(aiocbp);
 
@@ -61,6 +79,7 @@ int p101_aio_read(const struct p101_env *env, struct p101_error *err, struct aio
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -69,6 +88,7 @@ ssize_t p101_aio_return(const struct p101_env *env, struct p101_error *err, stru
     ssize_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
     errno   = 0;
     ret_val = aio_return(aiocbp);
 
@@ -77,6 +97,7 @@ ssize_t p101_aio_return(const struct p101_env *env, struct p101_error *err, stru
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -85,6 +106,7 @@ int p101_aio_suspend(const struct p101_env *env, struct p101_error *err, const s
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = aio_suspend(list, nent, timeout);
 
@@ -93,6 +115,7 @@ int p101_aio_suspend(const struct p101_env *env, struct p101_error *err, const s
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -101,6 +124,7 @@ int p101_aio_write(const struct p101_env *env, struct p101_error *err, struct ai
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = aio_write(aiocbp);
 
@@ -109,6 +133,7 @@ int p101_aio_write(const struct p101_env *env, struct p101_error *err, struct ai
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -117,6 +142,7 @@ int p101_lio_listio(const struct p101_env *env, struct p101_error *err, int mode
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno = 0;
 
 #pragma GCC diagnostic push
@@ -133,5 +159,6 @@ int p101_lio_listio(const struct p101_env *env, struct p101_error *err, int mode
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

@@ -15,20 +15,25 @@
  */
 
 #include "p101_posix/p101_wchar.h"
+#include "p101_posix_internal.h"
 
 size_t p101_mbsnrtowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict dst, const char **restrict src, size_t nmc, size_t len, mbstate_t *restrict ps)
 {
+    int    actual_error;
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
-    ret_val = mbsnrtowcs(dst, src, nmc, len, ps);
+    P101_POSIX_FAULT_RETURN(env, err, (size_t)-1);
+    errno        = 0;
+    ret_val      = mbsnrtowcs(dst, src, nmc, len, ps);
+    actual_error = errno;
 
     if(ret_val == (size_t)-1)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, actual_error == 0 ? EILSEQ : actual_error);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +42,7 @@ FILE *p101_open_wmemstream(const struct p101_env *env, struct p101_error *err, w
     FILE *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = open_wmemstream(bufp, sizep);
 
@@ -45,6 +51,7 @@ FILE *p101_open_wmemstream(const struct p101_env *env, struct p101_error *err, w
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -56,6 +63,7 @@ wchar_t *p101_wcpcpy(const struct p101_env *env, wchar_t *restrict ws1, const wc
     errno   = 0;
     ret_val = wcpcpy(ws1, ws2);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -67,6 +75,7 @@ wchar_t *p101_wcpncpy(const struct p101_env *env, wchar_t *restrict ws1, const w
     errno   = 0;
     ret_val = wcpncpy(ws1, ws2, n);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -78,6 +87,7 @@ int p101_wcscasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar_
     errno   = 0;
     ret_val = wcscasecmp(ws1, ws2);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -86,6 +96,7 @@ int p101_wcscoll_l(const struct p101_env *env, struct p101_error *err, const wch
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = wcscoll_l(ws1, ws2, locale);
 
@@ -94,6 +105,7 @@ int p101_wcscoll_l(const struct p101_env *env, struct p101_error *err, const wch
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -102,14 +114,20 @@ wchar_t *p101_wcsdup(const struct p101_env *env, struct p101_error *err, const w
     wchar_t *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = wcsdup(string);
 
-    if(ret_val != NULL)
+    if(ret_val == NULL)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, errno == 0 ? ENOMEM : errno);
+    }
+    else
+    {
+        P101_TRACK_ALLOC(env, ret_val, (wcslen(string) + 1U) * sizeof(*ret_val));
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -121,6 +139,7 @@ int p101_wcsncasecmp(const struct p101_env *env, const wchar_t *ws1, const wchar
     errno   = 0;
     ret_val = wcsncasecmp(ws1, ws2, n);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -132,22 +151,27 @@ size_t p101_wcsnlen(const struct p101_env *env, const wchar_t *ws, size_t maxlen
     errno   = 0;
     ret_val = wcsnlen(ws, maxlen);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
 size_t p101_wcsnrtombs(const struct p101_env *env, struct p101_error *err, char *restrict dst, const wchar_t **restrict src, size_t nwc, size_t len, mbstate_t *restrict ps)
 {
+    int    actual_error;
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
-    ret_val = wcsnrtombs(dst, src, nwc, len, ps);
+    P101_POSIX_FAULT_RETURN(env, err, (size_t)-1);
+    errno        = 0;
+    ret_val      = wcsnrtombs(dst, src, nwc, len, ps);
+    actual_error = errno;
 
-    if(ret_val != (size_t)-1)
+    if(ret_val == (size_t)-1)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, actual_error == 0 ? EILSEQ : actual_error);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -156,6 +180,7 @@ size_t p101_wcsxfrm_l(const struct p101_env *env, struct p101_error *err, wchar_
     size_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = wcsxfrm_l(ws1, ws2, n, locale);
 
@@ -164,5 +189,6 @@ size_t p101_wcsxfrm_l(const struct p101_env *env, struct p101_error *err, wchar_
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

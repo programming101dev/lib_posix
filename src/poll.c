@@ -15,12 +15,14 @@
  */
 
 #include "p101_posix/p101_poll.h"
+#include "p101_posix_internal.h"
 
 int p101_poll(const struct p101_env *env, struct p101_error *err, struct pollfd fds[], nfds_t nfds, int timeout)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = poll(fds, nfds, timeout);
 
@@ -29,5 +31,6 @@ int p101_poll(const struct p101_env *env, struct p101_error *err, struct pollfd 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

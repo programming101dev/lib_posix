@@ -50,12 +50,4 @@ extern "C"
 }
 #endif
 
-// not on macOS
-// int p101_timer_create(const struct p101_env *env, struct p101_error *err, clockid_t clockid, struct sigevent *restrict evp, timer_t *restrict timerid);
-// int p101_timer_delete(const struct p101_env *env, struct p101_error *err, timer_t timerid);
-// int p101_timer_getoverrun(const struct p101_env *env, struct p101_error *err, timer_t timerid);
-// int p101_timer_gettime(const struct p101_env *env, struct p101_error *err, timer_t timerid, struct itimerspec *value);
-// int p101_timer_settime(const struct p101_env *env, struct p101_error *err, timer_t timerid, int flags, const struct itimerspec *restrict value, struct itimerspec *restrict
-// ovalue); int p101_clock_nanosleep(const struct p101_env *env, struct p101_error *err, clockid_t clock_id, int flags, const struct timespec *rqtp, struct timespec *rmtp);
-
 #endif    // LIBP101_POSIX_P101_TIME_H

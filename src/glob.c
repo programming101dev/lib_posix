@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_glob.h"
+#include "p101_posix_internal.h"
 
 /* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_glob(const struct p101_env *env, struct p101_error *err, const char *restrict pattern, int flags, int (*errfunc)(const char *epath, int eerrno), glob_t *restrict pglob)
@@ -22,6 +23,7 @@ int p101_glob(const struct p101_env *env, struct p101_error *err, const char *re
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, GLOB_NOSPACE);
     errno   = 0;
     ret_val = glob(pattern, flags, errfunc, pglob);
 
@@ -41,6 +43,7 @@ int p101_glob(const struct p101_env *env, struct p101_error *err, const char *re
         }
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -49,4 +52,5 @@ void p101_globfree(const struct p101_env *env, glob_t *pglob)
     P101_TRACE(env);
     errno = 0;
     globfree(pglob);
+    P101_TRACE_EXIT(env);
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/net/p101_if.h"
 
 void p101_if_freenameindex(const struct p101_env *env, struct if_nameindex *ptr)
@@ -21,6 +22,7 @@ void p101_if_freenameindex(const struct p101_env *env, struct if_nameindex *ptr)
     P101_TRACE(env);
     errno = 0;
     if_freenameindex(ptr);
+    P101_TRACE_EXIT(env);
 }
 
 char *p101_if_indextoname(const struct p101_env *env, struct p101_error *err, unsigned ifindex, char *ifname)
@@ -28,6 +30,7 @@ char *p101_if_indextoname(const struct p101_env *env, struct p101_error *err, un
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = if_indextoname(ifindex, ifname);
 
@@ -36,6 +39,7 @@ char *p101_if_indextoname(const struct p101_env *env, struct p101_error *err, un
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -44,6 +48,7 @@ struct if_nameindex *p101_if_nameindex(const struct p101_env *env, struct p101_e
     struct if_nameindex *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = if_nameindex();
 
@@ -52,16 +57,24 @@ struct if_nameindex *p101_if_nameindex(const struct p101_env *env, struct p101_e
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
-unsigned p101_if_nametoindex(const struct p101_env *env, const char *ifname)
+unsigned p101_if_nametoindex(const struct p101_env *env, struct p101_error *err, const char *ifname)
 {
     unsigned ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = if_nametoindex(ifname);
 
+    if(ret_val == 0U)
+    {
+        P101_ERROR_RAISE_ERRNO(err, errno == 0 ? ENXIO : errno);
+    }
+
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

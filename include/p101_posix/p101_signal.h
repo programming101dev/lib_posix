@@ -36,18 +36,11 @@ extern "C"
     int p101_sigismember(const struct p101_env *env, struct p101_error *err, const sigset_t *set, int signo);
     int p101_sigpending(const struct p101_env *env, struct p101_error *err, sigset_t *set);
     int p101_sigprocmask(const struct p101_env *env, struct p101_error *err, int how, const sigset_t *restrict set, sigset_t *restrict oset);
-    int p101_sigsuspend(const struct p101_env *env, struct p101_error *err, const sigset_t *sigmask);
+    int p101_sigsuspend(const struct p101_env *env, const sigset_t *sigmask);
     int p101_sigwait(const struct p101_env *env, struct p101_error *err, const sigset_t *restrict set, int *restrict sig);
 
 #ifdef __cplusplus
 }
 #endif
 
-// not on macOS
-// int p101_sigtimedwait(const struct p101_env *env, struct p101_error *err, const sigset_t *restrict set, siginfo_t *restrict info, const struct timespec *restrict timeout);
-// void p101_psiginfo(const struct p101_env *env, struct p101_error *err, const siginfo_t *pinfo, const char *message);
-// void p101_psignal(const struct p101_env *env, struct p101_error *err, int signum, const char *message);
-// int p101_sigqueue(const struct p101_env *env, struct p101_error *err, pid_t pid, int signo, union sigval value);
-// int p101_sigwaitinfo(const struct p101_env *env, struct p101_error *err, const sigset_t *restrict set, siginfo_t *restrict info);
-
-#endif    // LIBP101_POSIX_P101__H
+#endif    // LIBP101_POSIX_P101_SIGNAL_H

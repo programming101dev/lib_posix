@@ -32,8 +32,4 @@ extern "C"
 }
 #endif
 
-// unsafe
-// struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, gid_t gid);
-// struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, const char *name);
-
 #endif    // LIBP101_POSIX_P101_GRP_H

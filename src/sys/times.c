@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/sys/p101_times.h"
 
 clock_t p101_times(const struct p101_env *env, struct p101_error *err, struct tms *buffer)
@@ -21,6 +22,7 @@ clock_t p101_times(const struct p101_env *env, struct p101_error *err, struct tm
     clock_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (clock_t)-1);
     errno   = 0;
     ret_val = times(buffer);
 
@@ -29,5 +31,6 @@ clock_t p101_times(const struct p101_env *env, struct p101_error *err, struct tm
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

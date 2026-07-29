@@ -28,7 +28,7 @@ extern "C"
     void                 p101_if_freenameindex(const struct p101_env *env, struct if_nameindex *ptr);
     char                *p101_if_indextoname(const struct p101_env *env, struct p101_error *err, unsigned ifindex, char *ifname);
     struct if_nameindex *p101_if_nameindex(const struct p101_env *env, struct p101_error *err);
-    unsigned             p101_if_nametoindex(const struct p101_env *env, const char *ifname);
+    unsigned             p101_if_nametoindex(const struct p101_env *env, struct p101_error *err, const char *ifname);
 
 #ifdef __cplusplus
 }

@@ -29,6 +29,7 @@ int p101_strcasecmp(const struct p101_env *env, const char *s1, const char *s2)
     errno   = 0;
     ret_val = strcasecmp(s1, s2);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -40,6 +41,7 @@ int p101_strcasecmp_l(const struct p101_env *env, const char *s1, const char *s2
     errno   = 0;
     ret_val = strcasecmp_l(s1, s2, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -51,6 +53,7 @@ int p101_strncasecmp(const struct p101_env *env, const char *s1, const char *s2,
     errno   = 0;
     ret_val = strncasecmp(s1, s2, n);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -62,5 +65,6 @@ int p101_strncasecmp_l(const struct p101_env *env, const char *s1, const char *s
     errno   = 0;
     ret_val = strncasecmp_l(s1, s2, n, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

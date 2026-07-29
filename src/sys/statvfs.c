@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/sys/p101_statvfs.h"
 
 int p101_fstatvfs(const struct p101_env *env, struct p101_error *err, int fildes, struct statvfs *buf)
@@ -21,6 +22,7 @@ int p101_fstatvfs(const struct p101_env *env, struct p101_error *err, int fildes
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fstatvfs(fildes, buf);
 
@@ -29,6 +31,7 @@ int p101_fstatvfs(const struct p101_env *env, struct p101_error *err, int fildes
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +40,7 @@ int p101_statvfs(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = statvfs(path, buf);
 
@@ -45,5 +49,6 @@ int p101_statvfs(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

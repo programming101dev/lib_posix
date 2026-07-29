@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_fnmatch.h"
+#include "p101_posix_internal.h"
 #include <fnmatch.h>
 
 int p101_fnmatch(const struct p101_env *env, struct p101_error *err, const char *pattern, const char *string, int flags)
@@ -22,6 +23,7 @@ int p101_fnmatch(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, FNM_NOMATCH);
     errno   = 0;
     ret_val = fnmatch(pattern, string, flags);
 
@@ -30,5 +32,6 @@ int p101_fnmatch(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_SYSTEM(err, "Invalid filename match pattern", ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

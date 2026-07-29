@@ -15,30 +15,14 @@
  */
 
 #include "p101_posix/p101_grp.h"
-
-/*
-struct group *p101_getgrgid(const struct p101_env *env, struct p101_error *err, gid_t gid)
-{
-    struct group *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = getgrgid(gid);
-
-    if(ret_val == NULL)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
+#include "p101_posix_internal.h"
 
 int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gid, struct group *grp, char *buffer, size_t bufsize, struct group **result)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = getgrgid_r(gid, grp, buffer, bufsize, result);
 
@@ -47,32 +31,16 @@ int p101_getgrgid_r(const struct p101_env *env, struct p101_error *err, gid_t gi
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
-
-/*
-struct group *p101_getgrnam(const struct p101_env *env, struct p101_error *err, const char *name)
-{
-    struct group *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = getgrnam(name);
-
-    if(ret_val == NULL)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
 
 int p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct group *grp, char *buffer, size_t bufsize, struct group **result)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = getgrnam_r(name, grp, buffer, bufsize, result);
 
@@ -81,5 +49,6 @@ int p101_getgrnam_r(const struct p101_env *env, struct p101_error *err, const ch
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

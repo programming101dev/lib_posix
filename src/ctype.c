@@ -25,6 +25,7 @@ int p101_isalnum_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isalnum_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -36,6 +37,7 @@ int p101_isalpha_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isalpha_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -47,6 +49,7 @@ int p101_isblank_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isblank_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -58,6 +61,7 @@ int p101_iscntrl_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = iscntrl_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -69,6 +73,7 @@ int p101_isdigit_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isdigit_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -80,6 +85,7 @@ int p101_isgraph_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isgraph_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -91,6 +97,7 @@ int p101_islower_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = islower_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -102,6 +109,7 @@ int p101_isprint_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isprint_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -113,6 +121,7 @@ int p101_ispunct_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = ispunct_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -124,6 +133,7 @@ int p101_isspace_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isspace_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -135,6 +145,7 @@ int p101_isupper_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isupper_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -146,6 +157,7 @@ int p101_isxdigit_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = isxdigit_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -157,6 +169,7 @@ int p101_tolower_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = tolower_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -168,5 +181,6 @@ int p101_toupper_l(const struct p101_env *env, int c, locale_t locale)
     errno   = 0;
     ret_val = toupper_l(c, locale);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

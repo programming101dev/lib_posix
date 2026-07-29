@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/sys/p101_select.h"
 
 int p101_pselect(const struct p101_env *env, struct p101_error *err, int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds, const struct timespec *restrict timeout, const sigset_t *restrict sigmask)
@@ -21,6 +22,7 @@ int p101_pselect(const struct p101_env *env, struct p101_error *err, int nfds, f
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = pselect(nfds, readfds, writefds, errorfds, timeout, sigmask);
 
@@ -29,6 +31,7 @@ int p101_pselect(const struct p101_env *env, struct p101_error *err, int nfds, f
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -37,6 +40,7 @@ int p101_select(const struct p101_env *env, struct p101_error *err, int nfds, fd
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = select(nfds, readfds, writefds, errorfds, timeout);
 
@@ -45,5 +49,6 @@ int p101_select(const struct p101_env *env, struct p101_error *err, int nfds, fd
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

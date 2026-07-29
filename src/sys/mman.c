@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/sys/p101_mman.h"
 #include <sys/mman.h>
 
@@ -22,6 +23,7 @@ void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, 
     void *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, MAP_FAILED);
     errno   = 0;
     ret_val = mmap(addr, len, prot, flags, fildes, off);
 
@@ -30,6 +32,7 @@ void *p101_mmap(const struct p101_env *env, struct p101_error *err, void *addr, 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -38,6 +41,7 @@ int p101_mprotect(const struct p101_env *env, struct p101_error *err, void *addr
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = mprotect(addr, len, prot);
 
@@ -46,6 +50,7 @@ int p101_mprotect(const struct p101_env *env, struct p101_error *err, void *addr
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -54,6 +59,7 @@ int p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = munmap(addr, len);
 
@@ -62,5 +68,6 @@ int p101_munmap(const struct p101_env *env, struct p101_error *err, void *addr, 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

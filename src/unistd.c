@@ -15,24 +15,14 @@
  */
 
 #include "p101_posix/p101_unistd.h"
-
-// #include <unistd.h>
-
-#ifndef P101_TRACK_FORK
-void p101_env_track_fork(const struct p101_env *env, long parent_pid, long child_pid, const char *file_name, const char *function_name, int line_number);
-    #define P101_TRACK_FORK(env, parent_pid, child_pid) p101_env_track_fork((env), (parent_pid), (child_pid), __FILE__, __func__, __LINE__)
-#endif
-
-#ifndef P101_TRACK_EXEC
-void p101_env_track_exec(const struct p101_env *env, const char *target, const char *file_name, const char *function_name, int line_number);
-    #define P101_TRACK_EXEC(env, target) p101_env_track_exec((env), (target), __FILE__, __func__, __LINE__)
-#endif
+#include "p101_posix_internal.h"
 
 int p101_access(const struct p101_env *env, struct p101_error *err, const char *path, int amode)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = access(path, amode);
 
@@ -41,6 +31,7 @@ int p101_access(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -52,6 +43,7 @@ unsigned p101_alarm(const struct p101_env *env, unsigned seconds)
     errno   = 0;
     ret_val = alarm(seconds);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -60,6 +52,7 @@ int p101_chdir(const struct p101_env *env, struct p101_error *err, const char *p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = chdir(path);
 
@@ -68,6 +61,7 @@ int p101_chdir(const struct p101_env *env, struct p101_error *err, const char *p
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -76,6 +70,7 @@ int p101_chown(const struct p101_env *env, struct p101_error *err, const char *p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = chown(path, owner, group);
 
@@ -84,6 +79,7 @@ int p101_chown(const struct p101_env *env, struct p101_error *err, const char *p
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -131,14 +127,16 @@ size_t p101_confstr(const struct p101_env *env, struct p101_error *err, int name
     size_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = confstr(name, buf, len);
 
-    if(ret_val == 0)
+    if(ret_val == 0 && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -214,10 +212,11 @@ int p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, in
     return ret_val;
 }
 
-void p101__exit(const struct p101_env *env, int status)
+void p101_exit_immediately(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_TRACE_EXIT(env);
     _exit(status);
 }
 
@@ -226,15 +225,21 @@ int p101_execv(const struct p101_env *env, struct p101_error *err, const char *p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     P101_TRACK_EXEC(env, path);
     errno   = 0;
     ret_val = execv(path, argv);
 
     if(ret_val == -1)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        int actual_error;
+
+        actual_error = errno;
+        P101_TRACK_EXEC_FAILURE(env, path);
+        P101_ERROR_RAISE_ERRNO(err, actual_error);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -243,15 +248,21 @@ int p101_execve(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     P101_TRACK_EXEC(env, path);
     errno   = 0;
     ret_val = execve(path, argv, envp);
 
     if(ret_val == -1)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        int actual_error;
+
+        actual_error = errno;
+        P101_TRACK_EXEC_FAILURE(env, path);
+        P101_ERROR_RAISE_ERRNO(err, actual_error);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -260,15 +271,21 @@ int p101_execvp(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     P101_TRACK_EXEC(env, file);
     errno   = 0;
     ret_val = execvp(file, argv);
 
     if(ret_val == -1)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        int actual_error;
+
+        actual_error = errno;
+        P101_TRACK_EXEC_FAILURE(env, file);
+        P101_ERROR_RAISE_ERRNO(err, actual_error);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -277,6 +294,7 @@ int p101_faccessat(const struct p101_env *env, struct p101_error *err, int fd, c
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = faccessat(fd, path, amode, flag);
 
@@ -285,6 +303,7 @@ int p101_faccessat(const struct p101_env *env, struct p101_error *err, int fd, c
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -293,6 +312,7 @@ int p101_fchdir(const struct p101_env *env, struct p101_error *err, int fildes)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fchdir(fildes);
 
@@ -301,6 +321,7 @@ int p101_fchdir(const struct p101_env *env, struct p101_error *err, int fildes)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -309,6 +330,7 @@ int p101_fchown(const struct p101_env *env, struct p101_error *err, int fildes, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fchown(fildes, owner, group);
 
@@ -317,6 +339,7 @@ int p101_fchown(const struct p101_env *env, struct p101_error *err, int fildes, 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -325,6 +348,7 @@ int p101_fchownat(const struct p101_env *env, struct p101_error *err, int fd, co
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fchownat(fd, path, owner, group, flag);
 
@@ -333,6 +357,7 @@ int p101_fchownat(const struct p101_env *env, struct p101_error *err, int fd, co
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -341,6 +366,7 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
     pid_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
     errno   = 0;
     ret_val = fork();
 
@@ -367,6 +393,7 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
         P101_TRACK_FORK(env, parent_pid, child_pid);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -375,6 +402,7 @@ long p101_fpathconf(const struct p101_env *env, struct p101_error *err, int fild
     long ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = fpathconf(fildes, name);
 
@@ -383,6 +411,7 @@ long p101_fpathconf(const struct p101_env *env, struct p101_error *err, int fild
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -391,6 +420,7 @@ int p101_ftruncate(const struct p101_env *env, struct p101_error *err, int filde
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = ftruncate(fildes, length);
 
@@ -399,6 +429,7 @@ int p101_ftruncate(const struct p101_env *env, struct p101_error *err, int filde
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -407,6 +438,7 @@ char *p101_getcwd(const struct p101_env *env, struct p101_error *err, char *buf,
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = getcwd(buf, size);
 
@@ -415,6 +447,7 @@ char *p101_getcwd(const struct p101_env *env, struct p101_error *err, char *buf,
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -426,6 +459,7 @@ gid_t p101_getegid(const struct p101_env *env)
     errno   = 0;
     ret_val = getegid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -437,6 +471,7 @@ uid_t p101_geteuid(const struct p101_env *env)
     errno   = 0;
     ret_val = geteuid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -448,6 +483,7 @@ gid_t p101_getgid(const struct p101_env *env)
     errno   = 0;
     ret_val = getgid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -456,6 +492,7 @@ int p101_getgroups(const struct p101_env *env, struct p101_error *err, int gidse
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = getgroups(gidsetsize, grouplist);
 
@@ -464,6 +501,7 @@ int p101_getgroups(const struct p101_env *env, struct p101_error *err, int gidse
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -472,6 +510,7 @@ int p101_gethostname(const struct p101_env *env, struct p101_error *err, char *n
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = gethostname(name, namelen);
 
@@ -480,32 +519,16 @@ int p101_gethostname(const struct p101_env *env, struct p101_error *err, char *n
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
-
-/*
-char *p101_getlogin(const struct p101_env *env, struct p101_error *err)
-{
-    char *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = getlogin();
-
-    if(ret_val == NULL)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
 
 int p101_getlogin_r(const struct p101_env *env, struct p101_error *err, char *name, size_t namesize)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = getlogin_r(name, namesize);
 
@@ -514,6 +537,7 @@ int p101_getlogin_r(const struct p101_env *env, struct p101_error *err, char *na
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -525,6 +549,7 @@ int p101_getopt(const struct p101_env *env, int argc, char *const argv[], const 
     errno   = 0;
     ret_val = getopt(argc, argv, optstring);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -533,6 +558,7 @@ pid_t p101_getpgid(const struct p101_env *env, struct p101_error *err, pid_t pid
     pid_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
     errno   = 0;
     ret_val = getpgid(pid);
 
@@ -541,6 +567,7 @@ pid_t p101_getpgid(const struct p101_env *env, struct p101_error *err, pid_t pid
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -552,6 +579,7 @@ pid_t p101_getpgrp(const struct p101_env *env)
     errno   = 0;
     ret_val = getpgrp();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -563,6 +591,7 @@ pid_t p101_getpid(const struct p101_env *env)
     errno   = 0;
     ret_val = getpid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -574,6 +603,7 @@ pid_t p101_getppid(const struct p101_env *env)
     errno   = 0;
     ret_val = getppid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -582,6 +612,7 @@ pid_t p101_getsid(const struct p101_env *env, struct p101_error *err, pid_t pid)
     pid_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
     errno   = 0;
     ret_val = getsid(pid);
 
@@ -590,6 +621,7 @@ pid_t p101_getsid(const struct p101_env *env, struct p101_error *err, pid_t pid)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -601,6 +633,7 @@ uid_t p101_getuid(const struct p101_env *env)
     errno   = 0;
     ret_val = getuid();
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -609,14 +642,16 @@ int p101_isatty(const struct p101_env *env, struct p101_error *err, int fildes)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = isatty(fildes);
 
-    if(ret_val == -1)
+    if(ret_val == 0)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, errno == 0 ? ENOTTY : errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -625,6 +660,7 @@ int p101_lchown(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = lchown(path, owner, group);
 
@@ -633,6 +669,7 @@ int p101_lchown(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -641,6 +678,7 @@ int p101_link(const struct p101_env *env, struct p101_error *err, const char *pa
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = link(path1, path2);
 
@@ -649,6 +687,7 @@ int p101_link(const struct p101_env *env, struct p101_error *err, const char *pa
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -657,6 +696,7 @@ int p101_linkat(const struct p101_env *env, struct p101_error *err, int fd1, con
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = linkat(fd1, path1, fd2, path2, flag);
 
@@ -665,6 +705,7 @@ int p101_linkat(const struct p101_env *env, struct p101_error *err, int fd1, con
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -673,6 +714,7 @@ off_t p101_lseek(const struct p101_env *env, struct p101_error *err, int fildes,
     off_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (off_t)-1);
     errno   = 0;
     ret_val = lseek(fildes, offset, whence);
 
@@ -681,6 +723,7 @@ off_t p101_lseek(const struct p101_env *env, struct p101_error *err, int fildes,
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -689,6 +732,7 @@ long p101_pathconf(const struct p101_env *env, struct p101_error *err, const cha
     long ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = pathconf(path, name);
 
@@ -697,10 +741,11 @@ long p101_pathconf(const struct p101_env *env, struct p101_error *err, const cha
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
-int p101_pause(const struct p101_env *env, struct p101_error *err)
+int p101_pause(const struct p101_env *env)
 {
     int ret_val;
 
@@ -708,11 +753,7 @@ int p101_pause(const struct p101_env *env, struct p101_error *err)
     errno   = 0;
     ret_val = pause();
 
-    if(ret_val == -1)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -757,6 +798,7 @@ ssize_t p101_pread(const struct p101_env *env, struct p101_error *err, int filde
     ssize_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
     errno   = 0;
     ret_val = pread(fildes, buf, nbyte, offset);
 
@@ -765,6 +807,7 @@ ssize_t p101_pread(const struct p101_env *env, struct p101_error *err, int filde
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -773,6 +816,7 @@ ssize_t p101_pwrite(const struct p101_env *env, struct p101_error *err, int fild
     ssize_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
     errno   = 0;
     ret_val = pwrite(fildes, buf, nbyte, offset);
 
@@ -781,6 +825,7 @@ ssize_t p101_pwrite(const struct p101_env *env, struct p101_error *err, int fild
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -818,6 +863,7 @@ ssize_t p101_readlink(const struct p101_env *env, struct p101_error *err, const 
     ssize_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
     errno   = 0;
     ret_val = readlink(path, buf, bufsize);
 
@@ -826,6 +872,7 @@ ssize_t p101_readlink(const struct p101_env *env, struct p101_error *err, const 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -834,6 +881,7 @@ ssize_t p101_readlinkat(const struct p101_env *env, struct p101_error *err, int 
     ssize_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (ssize_t)-1);
     errno   = 0;
     ret_val = readlinkat(fd, path, buf, bufsize);
 
@@ -842,6 +890,7 @@ ssize_t p101_readlinkat(const struct p101_env *env, struct p101_error *err, int 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -850,6 +899,7 @@ int p101_rmdir(const struct p101_env *env, struct p101_error *err, const char *p
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = rmdir(path);
 
@@ -858,6 +908,7 @@ int p101_rmdir(const struct p101_env *env, struct p101_error *err, const char *p
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -866,6 +917,7 @@ int p101_setegid(const struct p101_env *env, struct p101_error *err, gid_t gid)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setegid(gid);
 
@@ -874,6 +926,7 @@ int p101_setegid(const struct p101_env *env, struct p101_error *err, gid_t gid)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -882,6 +935,7 @@ int p101_seteuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = seteuid(uid);
 
@@ -890,6 +944,7 @@ int p101_seteuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -898,6 +953,7 @@ int p101_setgid(const struct p101_env *env, struct p101_error *err, gid_t gid)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setgid(gid);
 
@@ -906,6 +962,7 @@ int p101_setgid(const struct p101_env *env, struct p101_error *err, gid_t gid)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -914,6 +971,7 @@ int p101_setpgid(const struct p101_env *env, struct p101_error *err, pid_t pid, 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setpgid(pid, pgid);
 
@@ -922,6 +980,7 @@ int p101_setpgid(const struct p101_env *env, struct p101_error *err, pid_t pid, 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -930,6 +989,7 @@ pid_t p101_setsid(const struct p101_env *env, struct p101_error *err)
     pid_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
     errno   = 0;
     ret_val = setsid();
 
@@ -938,6 +998,7 @@ pid_t p101_setsid(const struct p101_env *env, struct p101_error *err)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -946,6 +1007,7 @@ int p101_setuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = setuid(uid);
 
@@ -954,6 +1016,7 @@ int p101_setuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -965,6 +1028,7 @@ unsigned p101_sleep(const struct p101_env *env, unsigned seconds)
     errno   = 0;
     ret_val = sleep(seconds);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -973,6 +1037,7 @@ int p101_symlink(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = symlink(path1, path2);
 
@@ -981,6 +1046,7 @@ int p101_symlink(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -989,6 +1055,7 @@ int p101_symlinkat(const struct p101_env *env, struct p101_error *err, const cha
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = symlinkat(path1, fd, path2);
 
@@ -997,6 +1064,7 @@ int p101_symlinkat(const struct p101_env *env, struct p101_error *err, const cha
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1005,6 +1073,7 @@ long p101_sysconf(const struct p101_env *env, struct p101_error *err, int name)
     long ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = sysconf(name);
 
@@ -1013,6 +1082,7 @@ long p101_sysconf(const struct p101_env *env, struct p101_error *err, int name)
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1021,6 +1091,7 @@ pid_t p101_tcgetpgrp(const struct p101_env *env, struct p101_error *err, int fil
     pid_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, (pid_t)-1);
     errno   = 0;
     ret_val = tcgetpgrp(fildes);
 
@@ -1029,6 +1100,7 @@ pid_t p101_tcgetpgrp(const struct p101_env *env, struct p101_error *err, int fil
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1037,6 +1109,7 @@ int p101_tcsetpgrp(const struct p101_env *env, struct p101_error *err, int filde
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = tcsetpgrp(fildes, pgid_id);
 
@@ -1045,6 +1118,7 @@ int p101_tcsetpgrp(const struct p101_env *env, struct p101_error *err, int filde
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1053,6 +1127,7 @@ int p101_truncate(const struct p101_env *env, struct p101_error *err, const char
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = truncate(path, length);
 
@@ -1061,32 +1136,16 @@ int p101_truncate(const struct p101_env *env, struct p101_error *err, const char
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
-
-/*
-char *p101_ttyname(const struct p101_env *env, struct p101_error *err, int fildes)
-{
-    char *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = ttyname(fildes);
-
-    if(ret_val == NULL)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
 
 int p101_ttyname_r(const struct p101_env *env, struct p101_error *err, int fildes, char *name, size_t namesize)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = ttyname_r(fildes, name, namesize);
 
@@ -1095,6 +1154,7 @@ int p101_ttyname_r(const struct p101_env *env, struct p101_error *err, int filde
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1103,6 +1163,7 @@ int p101_unlink(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = unlink(path);
 
@@ -1111,6 +1172,7 @@ int p101_unlink(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -1119,6 +1181,7 @@ int p101_unlinkat(const struct p101_env *env, struct p101_error *err, int fd, co
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = unlinkat(fd, path, flag);
 
@@ -1127,6 +1190,7 @@ int p101_unlinkat(const struct p101_env *env, struct p101_error *err, int fd, co
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 

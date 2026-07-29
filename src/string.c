@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_string.h"
+#include "p101_posix_internal.h"
 #include <string.h>
 
 #ifdef __APPLE__
@@ -29,6 +30,7 @@ char *p101_stpcpy(const struct p101_env *env, char *restrict s1, const char *res
     errno   = 0;
     ret_val = stpcpy(s1, s2);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -40,6 +42,7 @@ char *p101_stpncpy(const struct p101_env *env, char *restrict s1, const char *re
     errno   = 0;
     ret_val = stpncpy(s1, s2, n);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -48,6 +51,7 @@ int p101_strcoll_l(const struct p101_env *env, struct p101_error *err, const cha
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = strcoll_l(s1, s2, locale);
 
@@ -56,6 +60,7 @@ int p101_strcoll_l(const struct p101_env *env, struct p101_error *err, const cha
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -64,6 +69,7 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = strdup(s);
 
@@ -76,6 +82,7 @@ char *p101_strdup(const struct p101_env *env, struct p101_error *err, const char
         P101_TRACK_ALLOC(env, ret_val, strlen(s) + 1U);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -84,6 +91,7 @@ int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errn
     int ret_val = 0;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno = 0;
 
 #if defined(__GLIBC__) && defined(_GNU_SOURCE)
@@ -135,6 +143,7 @@ int p101_strerror_r(const struct p101_env *env, struct p101_error *err, int errn
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -143,6 +152,7 @@ char *p101_strndup(const struct p101_env *env, struct p101_error *err, const cha
     char *ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, NULL);
     errno   = 0;
     ret_val = strndup(s, size);
 
@@ -155,6 +165,7 @@ char *p101_strndup(const struct p101_env *env, struct p101_error *err, const cha
         P101_TRACK_ALLOC(env, ret_val, strnlen(s, size) + 1U);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -166,6 +177,7 @@ size_t p101_strnlen(const struct p101_env *env, const char *s, size_t maxlen)
     errno   = 0;
     ret_val = strnlen(s, maxlen);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -177,6 +189,7 @@ char *p101_strsignal(const struct p101_env *env, int signum)
     errno   = 0;
     ret_val = strsignal(signum);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -188,6 +201,7 @@ char *p101_strtok_r(const struct p101_env *env, char *restrict s, const char *re
     errno   = 0;
     ret_val = strtok_r(s, sep, state);
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -196,6 +210,7 @@ size_t p101_strxfrm_l(const struct p101_env *env, struct p101_error *err, char *
     size_t ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, 0);
     errno   = 0;
     ret_val = strxfrm_l(s1, s2, n, locale);
 
@@ -204,5 +219,6 @@ size_t p101_strxfrm_l(const struct p101_env *env, struct p101_error *err, char *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

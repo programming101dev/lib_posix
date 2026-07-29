@@ -15,6 +15,7 @@
  */
 
 #include "p101_posix/p101_wordexp.h"
+#include "p101_posix_internal.h"
 
 static const char *wordexp_error_message(int err_code);
 
@@ -52,6 +53,7 @@ int p101_wordexp(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, WRDE_NOSPACE);
     errno   = 0;
     ret_val = wordexp(words, pwordexp, flags);
 
@@ -60,6 +62,7 @@ int p101_wordexp(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_SYSTEM(err, wordexp_error_message(ret_val), ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
 
@@ -68,4 +71,5 @@ void p101_wordfree(const struct p101_env *env, wordexp_t *pwordexp)
     P101_TRACE(env);
     errno = 0;
     wordfree(pwordexp);
+    P101_TRACE_EXIT(env);
 }

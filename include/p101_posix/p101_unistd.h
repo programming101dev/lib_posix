@@ -33,7 +33,7 @@ extern "C"
     size_t                  p101_confstr(const struct p101_env *env, struct p101_error *err, int name, char *buf, size_t len);
     int                     p101_dup(const struct p101_env *env, struct p101_error *err, int fildes);
     int                     p101_dup2(const struct p101_env *env, struct p101_error *err, int fildes, int fildes2);
-    P101_ATTR_NORETURN void p101__exit(const struct p101_env *env, int status);
+    P101_ATTR_NORETURN void p101_exit_immediately(const struct p101_env *env, int status);
     int                     p101_execv(const struct p101_env *env, struct p101_error *err, const char *path, char *const argv[]);
     int                     p101_execve(const struct p101_env *env, struct p101_error *err, const char *path, char *const argv[], char *const envp[]);
     int                     p101_execvp(const struct p101_env *env, struct p101_error *err, const char *file, char *const argv[]);
@@ -64,7 +64,7 @@ extern "C"
     int                     p101_linkat(const struct p101_env *env, struct p101_error *err, int fd1, const char *path1, int fd2, const char *path2, int flag);
     off_t                   p101_lseek(const struct p101_env *env, struct p101_error *err, int fildes, off_t offset, int whence);
     long                    p101_pathconf(const struct p101_env *env, struct p101_error *err, const char *path, int name);
-    int                     p101_pause(const struct p101_env *env, struct p101_error *err);
+    int                     p101_pause(const struct p101_env *env);
     int                     p101_pipe(const struct p101_env *env, struct p101_error *err, int fildes[2]);
     ssize_t                 p101_pread(const struct p101_env *env, struct p101_error *err, int fildes, void *buf, size_t nbyte, off_t offset);
     ssize_t                 p101_pwrite(const struct p101_env *env, struct p101_error *err, int fildes, const void *buf, size_t nbyte, off_t offset);
@@ -93,12 +93,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-// unsafe
-// char *p101_getlogin(const struct p101_env *env, struct p101_error *err);
-// char *p101_ttyname(const struct p101_env *env, struct p101_error *err, int fildes);
-
-// not on macOS
-// int p101_fexecve(const struct p101_env *env, struct p101_error *err, int fd, char *const argv[], char *const envp[]);
 
 #endif    // LIBP101_POSIX_P101_UNISTD_H

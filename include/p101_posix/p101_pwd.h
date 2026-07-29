@@ -33,8 +33,4 @@ extern "C"
 }
 #endif
 
-// unsafe
-// struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err, const char *name);
-// struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err, uid_t uid);
-
 #endif    // LIBP101_POSIX_P101_PWD_H

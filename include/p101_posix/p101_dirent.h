@@ -33,7 +33,7 @@ extern "C"
 {
 #endif
 
-    int            p101_alphasort(const struct p101_env *env, struct p101_error *err, const struct dirent **d1, const struct dirent **d2);
+    int            p101_alphasort(const struct p101_env *env, const struct dirent **d1, const struct dirent **d2);
     int            p101_closedir(const struct p101_env *env, struct p101_error *err, DIR *dirp);
     int            p101_dirfd(const struct p101_env *env, struct p101_error *err, DIR *dirp);
     DIR           *p101_fdopendir(const struct p101_env *env, struct p101_error *err, int fd) P101_ATTR_WARN_UNUSED_RESULT;
@@ -45,8 +45,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-// obsolete
-// int p101_readdir_r(const struct p101_env *env, struct p101_error *err, DIR *restrict dirp, struct dirent *restrict entry, struct dirent **restrict result);
 
 #endif    // LIBP101_POSIX_P101_DIRENT_H

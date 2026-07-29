@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "../p101_posix_internal.h"
 #include "p101_posix/sys/p101_utsname.h"
 
 int p101_uname(const struct p101_env *env, struct p101_error *err, struct utsname *name)
@@ -21,6 +22,7 @@ int p101_uname(const struct p101_env *env, struct p101_error *err, struct utsnam
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN(env, err, -1);
     errno   = 0;
     ret_val = uname(name);
 
@@ -29,5 +31,6 @@ int p101_uname(const struct p101_env *env, struct p101_error *err, struct utsnam
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }

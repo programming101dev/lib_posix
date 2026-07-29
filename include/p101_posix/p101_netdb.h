@@ -42,16 +42,4 @@ extern "C"
 }
 #endif
 
-// unsafe
-// struct hostent  *p101_gethostent(const struct p101_env *env); - use getaddrinfo
-// struct netent   *p101_getnetbyaddr(const struct p101_env *env, uint32_t net, int type); - manually parse /etc/networks
-// struct netent   *p101_getnetbyname(const struct p101_env *env, const char *name); - manually parse /etc/networks
-// struct netent   *p101_getnetent(const struct p101_env *env); - manually parse /etc/network
-// struct protoent *p101_getprotobyname(const struct p101_env *env, const char *name); - manually parse /etc/protocols
-// struct protoent *p101_getprotobynumber(const struct p101_env *env, int proto); - manually parse /etc/protocols
-// struct protoent *p101_getprotoent(const struct p101_env *env); - manually parse /etc/protocols
-// struct servent  *p101_getservbyname(const struct p101_env *env, const char *name, const char *proto); - use getaddrinfo
-// struct servent  *p101_getservbyport(const struct p101_env *env, int port, const char *proto); - use getaddrinfo
-// struct servent  *p101_getservent(const struct p101_env *env); - manually parse /etc/services
-
 #endif    // LIBP101_POSIX_P101_NETDB_H

@@ -25,11 +25,10 @@ extern "C"
 {
 #endif
 
-    _Noreturn void p101_siglongjmp(const struct p101_env *env, sigjmp_buf jmpbuf, int val);
-    int            p101_sigsetjmp(const struct p101_env *env, sigjmp_buf jmpbuf, int savemask);
+    P101_ATTR_NORETURN void p101_siglongjmp(const struct p101_env *env, sigjmp_buf jmpbuf, int val);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif    // LIBP101_POSIX_P101__H
+#endif    // LIBP101_POSIX_P101_SETJMP_H

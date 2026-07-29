@@ -20,16 +20,6 @@ void p101_siglongjmp(const struct p101_env *env, sigjmp_buf jmpbuf, int val)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_TRACE_EXIT(env);
     siglongjmp(jmpbuf, val);
-}
-
-int p101_sigsetjmp(const struct p101_env *env, sigjmp_buf jmpbuf, int savemask)
-{
-    int ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = sigsetjmp(jmpbuf, savemask);
-
-    return ret_val;
 }

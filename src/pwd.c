@@ -15,31 +15,15 @@
  */
 
 #include "p101_posix/p101_pwd.h"
+#include "p101_posix_internal.h"
 #include <pwd.h>
-
-/*
-struct passwd *p101_getpwnam(const struct p101_env *env, struct p101_error *err, const char *name)
-{
-    struct passwd *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = getpwnam(name);
-
-    if(ret_val == NULL && errno != 0)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
 
 int p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const char *name, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = getpwnam_r(name, pwd, buffer, bufsize, result);
 
@@ -48,32 +32,16 @@ int p101_getpwnam_r(const struct p101_env *env, struct p101_error *err, const ch
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
-
-/*
-struct passwd *p101_getpwuid(const struct p101_env *env, struct p101_error *err, uid_t uid)
-{
-    struct passwd *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = getpwuid(uid);
-
-    if(ret_val == NULL && errno != 0)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-
-    return ret_val;
-}
-*/
 
 int p101_getpwuid_r(const struct p101_env *env, struct p101_error *err, uid_t uid, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_POSIX_FAULT_RETURN_CODE(env, err);
     errno   = 0;
     ret_val = getpwuid_r(uid, pwd, buffer, bufsize, result);
 
@@ -82,5 +50,6 @@ int p101_getpwuid_r(const struct p101_env *env, struct p101_error *err, uid_t ui
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
 
+    P101_TRACE_EXIT(env);
     return ret_val;
 }
