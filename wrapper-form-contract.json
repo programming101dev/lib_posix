@@ -1,0 +1,59 @@
+{
+  "schema": "p101-wrapper-form-contract-v1",
+  "selector": {
+    "include": "^p101_",
+    "public_only": true,
+    "minimum_matches": 1
+  },
+  "mapping": {
+    "strip_prefix": "p101_"
+  },
+  "context_parameter": {
+    "index": 0,
+    "type_contains": "p101_env",
+    "mode": "required"
+  },
+  "error_parameter": {
+    "index": 1,
+    "type_contains": "p101_error",
+    "mode": "optional"
+  },
+  "requirements": {
+    "balanced_trace": true,
+    "fault": "when-error",
+    "target_required": true,
+    "target_call_count": 1,
+    "compare_target_signature": true
+  },
+  "overrides": [
+    {
+      "match": "^p101_(htonl|htons|ntohl|ntohs|sigaddset|sigdelset|sigemptyset|sigfillset|sigismember|getc_unlocked|getchar_unlocked|putc_unlocked|putchar_unlocked)$",
+      "target_required": false,
+      "compare_target_signature": false,
+      "reason": "These interfaces may be macros or builtins and need not retain a direct call node."
+    },
+    {
+      "match": "^p101_posix_exit_immediately$",
+      "target": "_exit",
+      "compare_target_signature": false,
+      "reason": "The descriptive p101 name deliberately maps to POSIX _exit."
+    },
+    {
+      "match": "^p101_fcntl$",
+      "target_call_count": 3,
+      "compare_target_signature": false,
+      "reason": "The variadic wrapper has separate no-argument, integer, and flock call sites."
+    },
+    {
+      "match": "^p101_(open|openat|sem_open)$",
+      "target_call_count": 2,
+      "compare_target_signature": false,
+      "reason": "Each variadic wrapper has call sites with and without its optional arguments."
+    },
+    {
+      "match": "^p101_freelocale$",
+      "compare_target_signature": false,
+      "reason": "The wrapper normalizes the platform-dependent native return type to void."
+    }
+  ]
+}
