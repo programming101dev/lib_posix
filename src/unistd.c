@@ -217,6 +217,7 @@ void p101_posix_exit_immediately(const struct p101_env *env, int status)
     P101_TRACE(env);
     errno = 0;
     P101_TRACE_EXIT(env);
+    p101_env_complete_event_streams(env);
     _exit(status);
 }
 
@@ -376,14 +377,9 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
     }
     else if(ret_val == 0)
     {
-        pid_t child_pid;
-        pid_t parent_pid;
-
-        parent_pid = p101_getppid(env);
-        child_pid  = p101_getpid(env);
-        P101_TRACK_FORK(env, parent_pid, child_pid);
+        p101_env_after_fork_child(env);
     }
-    else
+    else if(ret_val > 0)
     {
         pid_t child_pid;
         pid_t parent_pid;
@@ -393,7 +389,10 @@ pid_t p101_fork(const struct p101_env *env, struct p101_error *err)
         P101_TRACK_FORK(env, parent_pid, child_pid);
     }
 
-    P101_TRACE_EXIT(env);
+    if(ret_val != 0)
+    {
+        P101_TRACE_EXIT(env);
+    }
     return ret_val;
 }
 

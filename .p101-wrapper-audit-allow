@@ -3,4 +3,7 @@ src/dirent.c:*:dirfd
 src/dlfcn.c:*:dlerror
 src/stdio.c:*:ferror
 src/stdio.c:*:fileno
+# p101_pthread_create must inspect an optional attribute without adding a
+# second traced/fault-injected wrapper operation to the create boundary.
+src/pthread.c:p101_pthread_create:pthread_attr_getdetachstate
 src/unistd.c:*:_exit

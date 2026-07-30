@@ -17,6 +17,111 @@
 #include "p101_posix/p101_pthread.h"
 #include "p101_posix_internal.h"
 
+enum
+{
+    P101_HEX_SHIFT            = 4,
+    P101_HEX_MASK             = 15,
+    P101_THREAD_METADATA_SIZE = 8 + (sizeof(pthread_t) * 2) + 1,
+    P101_MUTEX_OWNER_ID_SIZE  = P101_ENV_POINTER_RESOURCE_ID_SIZE + P101_THREAD_METADATA_SIZE + 1
+};
+
+static void pthread_metadata(pthread_t thread, char metadata[P101_THREAD_METADATA_SIZE])
+{
+    static const char    digits[] = "0123456789abcdef";
+    static const char    prefix[] = "thread=";
+    const unsigned char *bytes;
+    size_t               offset;
+
+    bytes = (const unsigned char *)&thread;
+    for(offset = 0U; offset < sizeof(prefix) - 1U; offset++)
+    {
+        metadata[offset] = prefix[offset];
+    }
+    for(size_t i = 0U; i < sizeof(pthread_t); i++)
+    {
+        metadata[offset++] = digits[(bytes[i] >> P101_HEX_SHIFT) & P101_HEX_MASK];
+        metadata[offset++] = digits[bytes[i] & P101_HEX_MASK];
+    }
+    metadata[offset] = '\0';
+}
+
+static void pthread_track_held(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
+{
+    char   metadata[P101_THREAD_METADATA_SIZE];
+    char   pointer_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
+    char   resource_id[P101_MUTEX_OWNER_ID_SIZE];
+    size_t offset;
+
+    pthread_metadata(p101_pthread_self(env), metadata);
+    p101_env_pointer_resource_id(pointer_id, sizeof(pointer_id), resource);
+    offset = 0U;
+    while(pointer_id[offset] != '\0')
+    {
+        resource_id[offset] = pointer_id[offset];
+        offset++;
+    }
+    resource_id[offset++] = '@';
+    for(size_t i = 0U; metadata[i] != '\0'; i++)
+    {
+        resource_id[offset++] = metadata[i];
+    }
+    resource_id[offset] = '\0';
+    p101_env_track_resource(env, event, resource_class, resource_id, NULL, 0U, metadata, file_name, function_name, line_number);
+}
+
+static void pthread_track_joinable(const struct p101_env *env, p101_tool_event_resource_kind event, pthread_t thread, const char *file_name, const char *function_name, int line_number)
+{
+    char resource_id[P101_THREAD_METADATA_SIZE];
+
+    pthread_metadata(thread, resource_id);
+    p101_env_track_resource(env, event, "pthread-joinable-thread", resource_id, NULL, 0U, NULL, file_name, function_name, line_number);
+}
+
+static void pthread_track_pointer_wait(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
+{
+    char   metadata[P101_THREAD_METADATA_SIZE];
+    char   pointer_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
+    char   resource_id[P101_MUTEX_OWNER_ID_SIZE];
+    size_t offset;
+
+    pthread_metadata(p101_pthread_self(env), metadata);
+    p101_env_pointer_resource_id(pointer_id, sizeof(pointer_id), resource);
+    offset = 0U;
+    while(pointer_id[offset] != '\0')
+    {
+        resource_id[offset] = pointer_id[offset];
+        offset++;
+    }
+    resource_id[offset++] = '@';
+    for(size_t i = 0U; metadata[i] != '\0'; i++)
+    {
+        resource_id[offset++] = metadata[i];
+    }
+    resource_id[offset] = '\0';
+    p101_env_track_resource(env, event, resource_class, resource_id, NULL, 0U, metadata, file_name, function_name, line_number);
+}
+
+static void pthread_track_join_wait(const struct p101_env *env, p101_tool_event_resource_kind event, pthread_t target, const char *file_name, const char *function_name, int line_number)
+{
+    char current_id[P101_THREAD_METADATA_SIZE];
+    char target_id[P101_THREAD_METADATA_SIZE];
+
+    pthread_metadata(p101_pthread_self(env), current_id);
+    pthread_metadata(target, target_id);
+    p101_env_track_resource(env, event, "pthread-join-wait", current_id, target_id, 0U, current_id, file_name, function_name, line_number);
+}
+
+#define P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_RELEASE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_RWLOCK_RELEASE(env, rwlock) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_RELEASE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOINABLE_ACQUIRE(env, thread) pthread_track_joinable((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOINABLE_RELEASE(env, thread) pthread_track_joinable((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (resource_class), (resource), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_WAIT_RELEASE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (resource_class), (resource), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOIN_WAIT_ACQUIRE(env, thread) pthread_track_join_wait((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOIN_WAIT_RELEASE(env, thread) pthread_track_join_wait((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
+
 /* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void))
 {
@@ -285,8 +390,12 @@ int p101_pthread_cond_timedwait(const struct p101_env *env, struct p101_error *e
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-condition-wait", cond);
     errno   = 0;
     ret_val = pthread_cond_timedwait(cond, mutex, abstime);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-condition-wait", cond);
+    P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex);
 
     if(ret_val != 0 && ret_val != ETIMEDOUT)
     {
@@ -303,8 +412,12 @@ int p101_pthread_cond_wait(const struct p101_env *env, struct p101_error *err, p
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-condition-wait", cond);
     errno   = 0;
     ret_val = pthread_cond_wait(cond, mutex);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-condition-wait", cond);
+    P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex);
 
     if(ret_val != 0)
     {
@@ -362,16 +475,32 @@ int p101_pthread_condattr_init(const struct p101_env *env, struct p101_error *er
 /* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_create(const struct p101_env *env, struct p101_error *err, pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg)
 {
+    int detach_state;
     int ret_val;
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    detach_state = PTHREAD_CREATE_JOINABLE;
+    if(attr != NULL)
+    {
+        ret_val = pthread_attr_getdetachstate(attr, &detach_state);
+        if(ret_val != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, ret_val);
+            P101_TRACE_EXIT(env);
+            return ret_val;
+        }
+    }
     errno   = 0;
     ret_val = pthread_create(thread, attr, start_routine, arg);
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else if(detach_state == PTHREAD_CREATE_JOINABLE)
+    {
+        P101_PTHREAD_TRACK_JOINABLE_ACQUIRE(env, *thread);
     }
 
     P101_TRACE_EXIT(env);
@@ -390,6 +519,10 @@ int p101_pthread_detach(const struct p101_env *env, struct p101_error *err, pthr
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_JOINABLE_RELEASE(env, thread);
     }
 
     P101_TRACE_EXIT(env);
@@ -434,12 +567,18 @@ int p101_pthread_join(const struct p101_env *env, struct p101_error *err, pthrea
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_JOIN_WAIT_ACQUIRE(env, thread);
     errno   = 0;
     ret_val = pthread_join(thread, value_ptr);
+    P101_PTHREAD_TRACK_JOIN_WAIT_RELEASE(env, thread);
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_JOINABLE_RELEASE(env, thread);
     }
 
     P101_TRACE_EXIT(env);
@@ -532,12 +671,18 @@ int p101_pthread_mutex_lock(const struct p101_env *env, struct p101_error *err, 
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-mutex-wait", mutex);
     errno   = 0;
     ret_val = pthread_mutex_lock(mutex);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-mutex-wait", mutex);
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex);
     }
 
     P101_TRACE_EXIT(env);
@@ -550,12 +695,18 @@ int p101_pthread_mutex_trylock(const struct p101_env *env, struct p101_error *er
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-mutex-wait", mutex);
     errno   = 0;
     ret_val = pthread_mutex_trylock(mutex);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-mutex-wait", mutex);
 
     if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else if(ret_val == 0)
+    {
+        P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex);
     }
 
     P101_TRACE_EXIT(env);
@@ -574,6 +725,10 @@ int p101_pthread_mutex_unlock(const struct p101_env *env, struct p101_error *err
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex);
     }
 
     P101_TRACE_EXIT(env);
@@ -728,12 +883,18 @@ int p101_pthread_rwlock_rdlock(const struct p101_env *env, struct p101_error *er
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-rwlock-read-wait", rwlock);
     errno   = 0;
     ret_val = pthread_rwlock_rdlock(rwlock);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-rwlock-read-wait", rwlock);
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock);
     }
 
     P101_TRACE_EXIT(env);
@@ -746,12 +907,18 @@ int p101_pthread_rwlock_tryrdlock(const struct p101_env *env, struct p101_error 
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-rwlock-read-wait", rwlock);
     errno   = 0;
     ret_val = pthread_rwlock_tryrdlock(rwlock);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-rwlock-read-wait", rwlock);
 
     if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else if(ret_val == 0)
+    {
+        P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock);
     }
 
     P101_TRACE_EXIT(env);
@@ -764,12 +931,18 @@ int p101_pthread_rwlock_trywrlock(const struct p101_env *env, struct p101_error 
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-rwlock-write-wait", rwlock);
     errno   = 0;
     ret_val = pthread_rwlock_trywrlock(rwlock);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-rwlock-write-wait", rwlock);
 
     if(ret_val != 0 && ret_val != EBUSY)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else if(ret_val == 0)
+    {
+        P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock);
     }
 
     P101_TRACE_EXIT(env);
@@ -789,6 +962,10 @@ int p101_pthread_rwlock_unlock(const struct p101_env *env, struct p101_error *er
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
     }
+    else
+    {
+        P101_PTHREAD_TRACK_RWLOCK_RELEASE(env, rwlock);
+    }
 
     P101_TRACE_EXIT(env);
     return ret_val;
@@ -800,12 +977,18 @@ int p101_pthread_rwlock_wrlock(const struct p101_env *env, struct p101_error *er
 
     P101_TRACE(env);
     P101_POSIX_FAULT_RETURN_CODE(env, err);
+    P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, "pthread-rwlock-write-wait", rwlock);
     errno   = 0;
     ret_val = pthread_rwlock_wrlock(rwlock);
+    P101_PTHREAD_TRACK_WAIT_RELEASE(env, "pthread-rwlock-write-wait", rwlock);
 
     if(ret_val != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, ret_val);
+    }
+    else
+    {
+        P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock);
     }
 
     P101_TRACE_EXIT(env);

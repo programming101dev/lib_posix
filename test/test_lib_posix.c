@@ -39,6 +39,12 @@ struct event_counts
     int frees;
 };
 
+struct resource_counts
+{
+    int mutex_acquires;
+    int mutex_releases;
+};
+
 struct fault_state
 {
     const char *target;
@@ -106,6 +112,33 @@ static void observe_allocations(const struct p101_env *env, p101_env_alloc_event
     else if(event == P101_ENV_ALLOC_FREE)
     {
         counts->frees++;
+    }
+}
+
+static void observe_resources(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const char *resource_id, const char *related_id, size_t size, const char *metadata, const char *file_name, const char *function_name, int line_number, void *user_data)
+{
+    struct resource_counts *counts;
+
+    (void)env;
+    (void)resource_id;
+    (void)related_id;
+    (void)size;
+    (void)metadata;
+    (void)file_name;
+    (void)function_name;
+    (void)line_number;
+    counts = user_data;
+    if(strcmp(resource_class, "pthread-mutex-held") != 0)
+    {
+        return;
+    }
+    if(event == P101_TOOL_EVENT_RESOURCE_ACQUIRE)
+    {
+        counts->mutex_acquires++;
+    }
+    else if(event == P101_TOOL_EVENT_RESOURCE_RELEASE)
+    {
+        counts->mutex_releases++;
     }
 }
 
@@ -217,14 +250,19 @@ static void test_regex_error_message_cleanup(struct p101_env *env, struct p101_e
 
 static void test_expected_statuses(struct p101_env *env, struct p101_error *err)
 {
-    pthread_mutex_t mutex;
+    struct resource_counts counts = {0};
+    pthread_mutex_t        mutex;
 
+    p101_env_set_resource_observer(env, observe_resources, &counts);
     EXPECT(p101_pthread_mutex_init(env, err, &mutex, NULL) == 0);
     EXPECT(p101_pthread_mutex_lock(env, err, &mutex) == 0);
     EXPECT(p101_pthread_mutex_trylock(env, err, &mutex) == EBUSY);
     EXPECT(p101_error_has_no_error(err));
     EXPECT(p101_pthread_mutex_unlock(env, err, &mutex) == 0);
     EXPECT(p101_pthread_mutex_destroy(env, err, &mutex) == 0);
+    EXPECT(counts.mutex_acquires == 1);
+    EXPECT(counts.mutex_releases == 1);
+    p101_env_set_resource_observer(env, NULL, NULL);
 }
 
 static void test_faults_and_balanced_trace(struct p101_env *env, struct p101_error *err)
