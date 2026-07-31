@@ -1,4 +1,8 @@
-# lib_posix Repository Guide
+# lib_posix Repository Guide (retired)
+
+This standards-based aggregate has been replaced by the functional `lib_*`
+repositories listed in `scripts/repos.txt`. It is retained only as migration
+history and is no longer part of the active build, install, or CI graph.
 
 Welcome to the `lib_posix` repository — POSIX utilities, part of the Programming 101 C library collection. This guide will help you set up, build, and install the library.
 
