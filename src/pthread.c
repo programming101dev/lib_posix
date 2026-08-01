@@ -45,7 +45,7 @@ static void pthread_metadata(pthread_t thread, char metadata[P101_THREAD_METADAT
     metadata[offset] = '\0';
 }
 
-static void pthread_track_held(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
+static void pthread_track_held(const struct p101_env *env, p101_env_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
 {
     char   metadata[P101_THREAD_METADATA_SIZE];
     char   pointer_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
@@ -69,7 +69,7 @@ static void pthread_track_held(const struct p101_env *env, p101_tool_event_resou
     p101_env_track_resource(env, event, resource_class, resource_id, NULL, 0U, metadata, file_name, function_name, line_number);
 }
 
-static void pthread_track_joinable(const struct p101_env *env, p101_tool_event_resource_kind event, pthread_t thread, const char *file_name, const char *function_name, int line_number)
+static void pthread_track_joinable(const struct p101_env *env, p101_env_resource_kind event, pthread_t thread, const char *file_name, const char *function_name, int line_number)
 {
     char resource_id[P101_THREAD_METADATA_SIZE];
 
@@ -77,7 +77,7 @@ static void pthread_track_joinable(const struct p101_env *env, p101_tool_event_r
     p101_env_track_resource(env, event, "pthread-joinable-thread", resource_id, NULL, 0U, NULL, file_name, function_name, line_number);
 }
 
-static void pthread_track_pointer_wait(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
+static void pthread_track_pointer_wait(const struct p101_env *env, p101_env_resource_kind event, const char *resource_class, const void *resource, const char *file_name, const char *function_name, int line_number)
 {
     char   metadata[P101_THREAD_METADATA_SIZE];
     char   pointer_id[P101_ENV_POINTER_RESOURCE_ID_SIZE];
@@ -101,7 +101,7 @@ static void pthread_track_pointer_wait(const struct p101_env *env, p101_tool_eve
     p101_env_track_resource(env, event, resource_class, resource_id, NULL, 0U, metadata, file_name, function_name, line_number);
 }
 
-static void pthread_track_join_wait(const struct p101_env *env, p101_tool_event_resource_kind event, pthread_t target, const char *file_name, const char *function_name, int line_number)
+static void pthread_track_join_wait(const struct p101_env *env, p101_env_resource_kind event, pthread_t target, const char *file_name, const char *function_name, int line_number)
 {
     char current_id[P101_THREAD_METADATA_SIZE];
     char target_id[P101_THREAD_METADATA_SIZE];
@@ -111,16 +111,16 @@ static void pthread_track_join_wait(const struct p101_env *env, p101_tool_event_
     p101_env_track_resource(env, event, "pthread-join-wait", current_id, target_id, 0U, current_id, file_name, function_name, line_number);
 }
 
-#define P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_RELEASE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_RWLOCK_RELEASE(env, rwlock) pthread_track_held((env), P101_TOOL_EVENT_RESOURCE_RELEASE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_JOINABLE_ACQUIRE(env, thread) pthread_track_joinable((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_JOINABLE_RELEASE(env, thread) pthread_track_joinable((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (resource_class), (resource), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_WAIT_RELEASE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (resource_class), (resource), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_JOIN_WAIT_ACQUIRE(env, thread) pthread_track_join_wait((env), P101_TOOL_EVENT_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
-#define P101_PTHREAD_TRACK_JOIN_WAIT_RELEASE(env, thread) pthread_track_join_wait((env), P101_TOOL_EVENT_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_MUTEX_ACQUIRE(env, mutex) pthread_track_held((env), P101_ENV_RESOURCE_ACQUIRE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_MUTEX_RELEASE(env, mutex) pthread_track_held((env), P101_ENV_RESOURCE_RELEASE, "pthread-mutex-held", (mutex), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_RWLOCK_ACQUIRE(env, rwlock) pthread_track_held((env), P101_ENV_RESOURCE_ACQUIRE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_RWLOCK_RELEASE(env, rwlock) pthread_track_held((env), P101_ENV_RESOURCE_RELEASE, "pthread-rwlock-held", (rwlock), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOINABLE_ACQUIRE(env, thread) pthread_track_joinable((env), P101_ENV_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOINABLE_RELEASE(env, thread) pthread_track_joinable((env), P101_ENV_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_WAIT_ACQUIRE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_ENV_RESOURCE_ACQUIRE, (resource_class), (resource), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_WAIT_RELEASE(env, resource_class, resource) pthread_track_pointer_wait((env), P101_ENV_RESOURCE_RELEASE, (resource_class), (resource), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOIN_WAIT_ACQUIRE(env, thread) pthread_track_join_wait((env), P101_ENV_RESOURCE_ACQUIRE, (thread), __FILE__, __func__, __LINE__)
+#define P101_PTHREAD_TRACK_JOIN_WAIT_RELEASE(env, thread) pthread_track_join_wait((env), P101_ENV_RESOURCE_RELEASE, (thread), __FILE__, __func__, __LINE__)
 
 /* cppcheck-suppress funcArgNamesDifferentUnnamed */
 int p101_pthread_atfork(const struct p101_env *env, struct p101_error *err, void (*prepare)(void), void (*parent)(void), void (*child)(void))

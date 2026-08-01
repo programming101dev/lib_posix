@@ -115,7 +115,7 @@ static void observe_allocations(const struct p101_env *env, p101_env_alloc_event
     }
 }
 
-static void observe_resources(const struct p101_env *env, p101_tool_event_resource_kind event, const char *resource_class, const char *resource_id, const char *related_id, size_t size, const char *metadata, const char *file_name, const char *function_name, int line_number, void *user_data)
+static void observe_resources(const struct p101_env *env, p101_env_resource_kind event, const char *resource_class, const char *resource_id, const char *related_id, size_t size, const char *metadata, const char *file_name, const char *function_name, int line_number, void *user_data)
 {
     struct resource_counts *counts;
 
@@ -132,11 +132,11 @@ static void observe_resources(const struct p101_env *env, p101_tool_event_resour
     {
         return;
     }
-    if(event == P101_TOOL_EVENT_RESOURCE_ACQUIRE)
+    if(event == P101_ENV_RESOURCE_ACQUIRE)
     {
         counts->mutex_acquires++;
     }
-    else if(event == P101_TOOL_EVENT_RESOURCE_RELEASE)
+    else if(event == P101_ENV_RESOURCE_RELEASE)
     {
         counts->mutex_releases++;
     }
